@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Friend Spotter</string>
+
+    <string name="shared_preferences_user">shared_pref_user</string>
 </resources>
