@@ -6,6 +6,9 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.design.widget.TextInputLayout;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +26,7 @@ public class LoginFragment extends Fragment{
 
     private Button loginButton, registerButton;
     private EditText emailEditText, passwordEditText;
+    private TextInputLayout emailInputLayout, passwordInputLayout;
     private ProgressBar loginProgressBar;
     private TextView titleText;
 
@@ -42,15 +46,18 @@ public class LoginFragment extends Fragment{
         emailEditText = (EditText) view.findViewById(R.id.email_edit_text);
         passwordEditText = (EditText) view.findViewById(R.id.password_edit_text);
 
+        emailInputLayout = (TextInputLayout) view.findViewById(R.id.email_edit_text_input_layout);
+        passwordInputLayout = (TextInputLayout) view.findViewById(R.id.password_edit_text_input_layout);
+
         registerButton = (Button) view.findViewById(R.id.register_fragment_button);
         loginButton = (Button) view.findViewById(R.id.login_button);
 
         loginProgressBar = (ProgressBar) view.findViewById(R.id.login_progress_bar);
         titleText = (TextView) view.findViewById(R.id.title_text_login);
 
-        Typeface myTypeface = Typeface.createFromAsset(getActivity().getAssets(), "fonts/timeless_bold.ttf");
-        titleText.setTypeface(myTypeface);
-        titleText.setShadowLayer(1, 0, 0, Color.BLACK);
+//        Typeface myTypeface = Typeface.createFromAsset(getActivity().getAssets(), "fonts/timeless_bold.ttf");
+//        titleText.setTypeface(myTypeface);
+//        titleText.setShadowLayer(1, 0, 0, Color.BLACK);
     }
 
     private void setListeners() {
@@ -69,18 +76,56 @@ public class LoginFragment extends Fragment{
 //            }
 //        });
 
-        emailEditText.setOnClickListener(new View.OnClickListener() {
+//        emailEditText.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                emailEditText.setError(null);
+//            }
+//        });
+//        passwordEditText.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                passwordEditText.setError(null);
+//            }
+//        });
+
+        emailEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
-            public void onClick(View v) {
-                emailEditText.setError(null);
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus){
+                    if (LoginManager.isValidEmail(emailEditText.getText().toString())){
+                        Log.e(TAG, "gites, valid email");
+                        emailInputLayout.setErrorEnabled(false);
+                    } else {
+                        emailInputLayout.setError("zly mail kolego");
+                    }
+                } else {
+                    emailInputLayout.setErrorEnabled(false);
+                }
             }
         });
-        passwordEditText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                passwordEditText.setError(null);
-            }
-        });
+
+//        emailEditText.addTextChangedListener(new TextWatcher() {
+//            @Override
+//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//
+//            }
+//
+//            @Override
+//            public void onTextChanged(CharSequence s, int start, int before, int count) {
+//
+//            }
+//
+//            @Override
+//            public void afterTextChanged(Editable s) {
+//                if (LoginManager.isValidEmail(s.toString())){
+//                    Log.e(TAG, "gites, valid email");
+//                    emailInputLayout.setErrorEnabled(false);
+//                } else {
+//                    emailInputLayout.setError("zly mail kolego");
+//                }
+//            }
+//        });
 
     }
 
