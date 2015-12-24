@@ -12,7 +12,12 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.mieczkowskidev.friendspotter.API.RestAPI;
+import com.mieczkowskidev.friendspotter.Objects.User;
 import com.mieczkowskidev.friendspotter.Objects.UserLogin;
+import com.mieczkowskidev.friendspotter.Utils.GenericConverter;
+
+import rx.functions.Action1;
 
 /**
  * Created by Patryk Mieczkowski on 2015-12-07
@@ -222,7 +227,7 @@ public class LoginFragment extends Fragment {
 
         UserLogin userLogin = new UserLogin(username, password);
 
-//        loginUserOnServer(user);
+        loginUserOnServer(userLogin);
     }
 
     private void startLoginLoading() {
@@ -251,49 +256,44 @@ public class LoginFragment extends Fragment {
         }
     }
 
-//    private void loginUserOnServer(User user) {
-//        Log.d(TAG, "loginUserOnServer()");
-//
-//        startLoginLoading();
-//
-//        RestClient restClient = new RestClient();
-//
-//        ServerInterface serverInterface = restClient.getRestAdapter().create(ServerInterface.class);
-//
-//        serverInterface.loginUser(user, new Callback<JsonElement>() {
-//            @Override
-//            public void success(JsonElement jsonElement, Response response) {
-//                Log.d(TAG, "loginUserOnServer success(): " + response.getStatus() + ", " + response.getReason());
-//
-//                Log.d(TAG, jsonElement.toString());
-//                JsonObject mainObject = jsonElement.getAsJsonObject();
-//                String status = mainObject.get("status").toString();
-//                String token = mainObject.get("token").toString();
-//                Log.d(TAG, "status: " + status + ", token: " + token);
-//
-//                SharedPreferences sharedPreferences = getActivity().getSharedPreferences(getActivity().getString(R.string.shared_preferences_user), Context.MODE_PRIVATE);
-//                sharedPreferences.edit().putString("token", token.replaceAll("\"","")).apply();
-//
-//                ((LoginActivity) getActivity()).startMainActivity();
-//            }
-//
-//            @Override
-//            public void failure(RetrofitError error) {
-//                if (error.getKind() == RetrofitError.Kind.NETWORK || error.getResponse() == null) {
-//                    Log.e(TAG, "error register with null");
-//                    showSnackbarInLoginActivity(getString(R.string.connection_error));
-//                } else {
-//                    Log.e(TAG, "loginUserOnServer failure() called with: " + "error = [" + error.getUrl() + "]");
-//                    String errorString = String.valueOf(error.getResponse().getStatus())
-//                            + ", " + String.valueOf(error.getResponse().getReason());
-//                    Log.e(TAG, "loginUserOnServer failure() called with: " + errorString);
-//                    showSnackbarInLoginActivity(getString(R.string.connection_error));
-//                }
-//                stopLoginLoading();
-//            }
-//        });
-//
-//    }
+    private void loginUserOnServer(UserLogin userLogin) {
+        Log.d(TAG, "loginUserOnServer() with " + userLogin.toString());
+
+        startLoginLoading();
+
+        GenericConverter<User> userLoginGenericConverter = new GenericConverter<>(Config.RestAPI, User.class);
+
+        RestAPI restAPI = userLoginGenericConverter.getRestAdapter().create(RestAPI.class);
+
+        restAPI.loginUser(userLogin)
+                .doOnError(new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        Log.e(TAG, "error :( " + throwable.getMessage());
+
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                stopLoginLoading();
+                            }
+                        });
+                    }
+                })
+                .subscribe(new Action1<User>() {
+                    @Override
+                    public void call(User user) {
+                        Log.d(TAG, "call() called with: " + "user = [" + user + "]");
+
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                stopLoginLoading();
+                            }
+                        });
+                    }
+                });
+
+    }
 
     private void showSnackbarInLoginActivity(String message) {
 

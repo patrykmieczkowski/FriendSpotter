@@ -9,6 +9,9 @@ public class User {
     private String AuthToken;
     private String image;
 
+    public User() {
+    }
+
     public User(String username, String authToken, String image) {
         this.username = username;
         AuthToken = authToken;

@@ -3,7 +3,7 @@ package com.mieczkowskidev.friendspotter.API;
 import com.mieczkowskidev.friendspotter.Objects.User;
 import com.mieczkowskidev.friendspotter.Objects.UserLogin;
 
-
+import retrofit.http.Body;
 import retrofit.http.POST;
 import rx.Observable;
 
@@ -13,8 +13,8 @@ import rx.Observable;
 public interface RestAPI {
 
     @POST("/register")
-    Observable<User> registerUser(UserLogin userLogin);
+    Observable<User> registerUser(@Body UserLogin userLogin);
 
     @POST("/login")
-    Observable<User> loginUser(UserLogin userLogin);
+    Observable<User> loginUser(@Body UserLogin userLogin);
 }

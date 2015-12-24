@@ -11,7 +11,7 @@
 
         <EditText
             android:id="@+id/login_edit_text_reg"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
@@ -20,13 +20,14 @@
             android:layout_marginTop="50dp"
             android:ellipsize="start"
             android:hint="@string/login_label_text"
+            android:text="Patusz"
             android:inputType="text"
             android:padding="@dimen/login_edit_text_padding"
             android:textSize="@dimen/login_text_size" />
 
         <EditText
             android:id="@+id/email_edit_text_reg"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/login_edit_text_reg"
             android:layout_centerHorizontal="true"
@@ -35,13 +36,14 @@
             android:layout_marginTop="@dimen/login_edit_text_margins"
             android:ellipsize="start"
             android:hint="@string/email_label_text"
+            android:text="patusz@patusz.com"
             android:inputType="textEmailAddress"
             android:padding="@dimen/login_edit_text_padding"
             android:textSize="@dimen/login_text_size" />
 
         <EditText
             android:id="@+id/password_edit_text_reg"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/email_edit_text_reg"
             android:layout_centerHorizontal="true"
@@ -49,6 +51,7 @@
             android:layout_marginRight="@dimen/login_edit_text_left_right_margin"
             android:layout_marginTop="@dimen/login_edit_text_margins"
             android:ellipsize="start"
+            android:text="patusz"
             android:hint="@string/password_label_text"
             android:inputType="textPassword"
             android:padding="@dimen/login_edit_text_padding"
@@ -56,10 +59,11 @@
 
         <EditText
             android:id="@+id/re_password_edit_text_reg"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/password_edit_text_reg"
             android:layout_centerHorizontal="true"
+            android:text="patusz"
             android:layout_marginLeft="@dimen/login_edit_text_left_right_margin"
             android:layout_marginRight="@dimen/login_edit_text_left_right_margin"
             android:layout_marginTop="@dimen/login_edit_text_margins"

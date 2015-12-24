@@ -10,6 +10,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 
+import com.mieczkowskidev.friendspotter.API.RestAPI;
+import com.mieczkowskidev.friendspotter.Objects.User;
+import com.mieczkowskidev.friendspotter.Objects.UserLogin;
+import com.mieczkowskidev.friendspotter.Utils.GenericConverter;
+
+import retrofit.RetrofitError;
+import rx.Subscriber;
+import rx.functions.Action1;
+
 /**
  * Created by Patryk Mieczkowski on 2015-12-13
  */
@@ -160,9 +169,9 @@ public class RegisterFragment extends Fragment {
         String email = emailEditText.getText().toString();
         String password = passwordEditText.getText().toString();
 
-//        User user = new User(username, email, password);
-//
-//        registerUserOnServer(user);
+        UserLogin userLogin = new UserLogin(username, email, password);
+
+        registerUserOnServer(userLogin);
     }
 
     private void startRegisterLoading() {
@@ -185,47 +194,86 @@ public class RegisterFragment extends Fragment {
         }
     }
 
-//    private void registerUserOnServer(User user) {
-//        Log.d(TAG, "registerUserOnServer()");
+    private void registerUserOnServer(UserLogin userLogin) {
+        Log.d(TAG, "registerUserOnServer() " + userLogin.toString());
+
+        startRegisterLoading();
+
+        GenericConverter<User> userRegisterGenericConverter = new GenericConverter<>(Config.RestAPI, User.class);
+
+        RestAPI restAPI = userRegisterGenericConverter.getRestAdapter().create(RestAPI.class);
+
+        restAPI.registerUser(userLogin)
+                .subscribe(new Subscriber<User>() {
+                    @Override
+                    public void onCompleted() {
+                        Log.d(TAG, "onCompleted() called with: " + "");
+
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                stopRegisterLoading();
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e(TAG, "error :( " + e.getMessage());
+
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                stopRegisterLoading();
+                            }
+                        });
+
+                        if (e instanceof RetrofitError) {
+                            Log.e(TAG, "call1: " + ((RetrofitError) e).getUrl());
+                            Log.e(TAG, "call2: " + ((RetrofitError) e).getResponse().getStatus());
+                        }
+                    }
+
+                    @Override
+                    public void onNext(User user) {
+                        Log.d(TAG, "onNext() called with: " + "user = [" + user + "]");
+
+                    }
+                });
+//        restAPI.registerUser(userLogin)
+//                .doOnError(new Action1<Throwable>() {
+//                    @Override
+//                    public void call(Throwable throwable) {
+//                        Log.e(TAG, "error :( " + throwable.getMessage());
 //
-//        startRegisterLoading();
+//                        getActivity().runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                stopRegisterLoading();
+//                            }
+//                        });
 //
-//        RestClient restClient = new RestClient();
+//                        if (throwable instanceof RetrofitError) {
+//                            Log.e(TAG, "call: " + ((RetrofitError) throwable).getUrl());
+//                            Log.e(TAG, "call: " + ((RetrofitError) throwable).getBody().toString());
 //
-//        ServerInterface serverInterface = restClient.getRestAdapter().create(ServerInterface.class);
-//
-//        serverInterface.registerUser(user, new Callback<User>() {
-//            @Override
-//            public void success(User user, Response response) {
-//                Log.d(TAG, "registerUserOnServer success(): " + response.getStatus() + ", " + response.getReason());
-//                Log.d(TAG, "registerUserOnServer success(): " + response.getUrl());
-//                showSnackbarInLoginActivity("User created! - please log in");
-//
-//                ((LoginActivity) getActivity()).startLoginFragment();
-//
-//            }
-//
-//            @Override
-//            public void failure(RetrofitError error) {
-//                if (error.getKind() == RetrofitError.Kind.NETWORK || error.getResponse() == null) {
-//                    Log.e(TAG, "error register with null");
-//                    showSnackbarInLoginActivity(getString(R.string.connection_error));
-//                } else {
-//                    Log.e(TAG, "registerUserOnServer failure() called with: " + "error = [" + error.getUrl() + "]");
-//                    String errorString = String.valueOf(error.getResponse().getStatus())
-//                            + ", " + String.valueOf(error.getResponse().getReason());
-//                    Log.e(TAG, "registerUserOnServer failure() called with: " + errorString);
-//                    if (error.getResponse().getStatus() == 400) {
-//                        showSnackbarInLoginActivity("Something went wrong, check formula again");
-//                    } else {
-//                        showSnackbarInLoginActivity(getString(R.string.connection_error));
+//                        }
 //                    }
-//                }
-//                stopRegisterLoading();
-//            }
-//        });
+//                })
+//                .subscribe(new Action1<User>() {
+//                    @Override
+//                    public void call(User user) {
+//                        Log.d(TAG, "call() called with: " + "user = [" + user + "]");
 //
-//    }
+//                        getActivity().runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                stopRegisterLoading();
+//                            }
+//                        });
+//                    }
+//                });
+    }
 
     private void showSnackbarInLoginActivity(String message) {
 
