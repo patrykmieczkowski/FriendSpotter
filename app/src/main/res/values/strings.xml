@@ -2,4 +2,14 @@
     <string name="app_name">Friend Spotter</string>
 
     <string name="shared_preferences_user">shared_pref_user</string>
+    <string name="formula_empty_error">Cannot be empty</string>
+    <string name="formula_password_error">Password must match</string>
+
+    <string name="email_label_text">Email</string>
+    <string name="password_label_text">Password</string>
+    <string name="re_password_label_text">Confirm Password</string>
+    <string name="login_label_text">Login</string>
+
+    <string name="new_register_button">Register</string>
+
 </resources>

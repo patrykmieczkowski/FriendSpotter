@@ -1,14 +1,8 @@
 package com.mieczkowskidev.friendspotter;
 
 import android.app.Fragment;
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +11,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import com.mieczkowskidev.friendspotter.Objects.UserLogin;
 
 /**
  * Created by Patryk Mieczkowski on 2015-12-07
@@ -75,12 +71,12 @@ public class LoginFragment extends Fragment {
             }
         });
 
-//        registerButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                ((LoginActivity) getActivity()).startRegisterFragment();
-//            }
-//        });
+        registerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loginActivity.startRegisterFragment();
+            }
+        });
 
 //        emailEditText.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -160,71 +156,71 @@ public class LoginFragment extends Fragment {
         getDataFromFormula();
     }
 
-    private void getDataFromFormula() {
-        Log.d(TAG, "getDataFromFormula()");
-
-
-        loginUser();
-
-
-    }
 //    private void getDataFromFormula() {
 //        Log.d(TAG, "getDataFromFormula()");
 //
-//        boolean cancel = false;
-//        View focusView = null;
 //
-//        if (LoginManager.getEditTextText(passwordEditText)) {
-//            Log.i(TAG, "Password is empty");
-//            passwordInputLayout.setError("empty");
-//            cancel = true;
-//            focusView = passwordEditText;
-//        }
+//        loginUser();
 //
-//        if (LoginManager.getEditTextText(emailEditText)) {
-//            Log.i(TAG, "Email is empty");
-//            emailInputLayout.setError("empty");
-//            cancel = true;
-//            focusView = emailEditText;
-//        }
 //
-//        if (cancel) {
-//            focusView.requestFocus();
-//
-//        } else {
-//            Log.d(TAG, "check password match");
-//            View focusView2 = null;
-//
-//            if (!LoginManager.isPasswordValid(passwordEditText.getText().toString())) {
-//                Log.i(TAG, "Password to short");
-//                passwordInputLayout.setError("Password to short");
-//                cancel = true;
-//                focusView2 = passwordEditText;
-//            }
-//
-//            if (!LoginManager.isValidEmail(emailEditText.getText().toString())) {
-//                Log.i(TAG, "Bad Email");
-//                emailInputLayout.setError("This is not a proper email address");
-//                cancel = true;
-//                focusView2 = emailEditText;
-//            }
-//
-//            if (cancel) {
-//                focusView2.requestFocus();
-//            } else {
-//                Log.d(TAG, "formula is valid!");
-//                loginUser();
-//            }
-//        }
 //    }
+    private void getDataFromFormula() {
+        Log.d(TAG, "getDataFromFormula()");
+
+        boolean cancel = false;
+        View focusView = null;
+
+        if (LoginManager.getEditTextText(passwordEditText)) {
+            Log.i(TAG, "Password is empty");
+            passwordInputLayout.setError(getString(R.string.formula_empty_error));
+            cancel = true;
+            focusView = passwordEditText;
+        }
+
+        if (LoginManager.getEditTextText(emailEditText)) {
+            Log.i(TAG, "Email is empty");
+            emailInputLayout.setError(getString(R.string.formula_empty_error));
+            cancel = true;
+            focusView = emailEditText;
+        }
+
+        if (cancel) {
+            focusView.requestFocus();
+
+        } else {
+            Log.d(TAG, "check password match");
+            View focusView2 = null;
+
+            if (!LoginManager.isPasswordValid(passwordEditText.getText().toString())) {
+                Log.i(TAG, "Password to short");
+                passwordInputLayout.setError("Password to short");
+                cancel = true;
+                focusView2 = passwordEditText;
+            }
+
+            if (!LoginManager.isValidEmail(emailEditText.getText().toString())) {
+                Log.i(TAG, "Bad Email");
+                emailInputLayout.setError("This is not a proper email address");
+                cancel = true;
+                focusView2 = emailEditText;
+            }
+
+            if (cancel) {
+                focusView2.requestFocus();
+            } else {
+                Log.d(TAG, "formula is valid!");
+                loginUser();
+            }
+        }
+    }
 
     private void loginUser() {
         Log.d(TAG, "loginUser()");
 
-        String email = emailEditText.getText().toString();
+        String username = emailEditText.getText().toString();
         String password = passwordEditText.getText().toString();
 
-//        User user = new User(email, password);
+        UserLogin userLogin = new UserLogin(username, password);
 
 //        loginUserOnServer(user);
     }
@@ -301,7 +297,7 @@ public class LoginFragment extends Fragment {
 
     private void showSnackbarInLoginActivity(String message) {
 
-        ((LoginActivity) getActivity()).showSnackbar(message);
+        loginActivity.showSnackbar(message);
 
     }
 

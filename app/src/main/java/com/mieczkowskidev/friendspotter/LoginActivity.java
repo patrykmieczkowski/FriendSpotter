@@ -90,19 +90,19 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-//    public void startRegisterFragment() {
-//        MODE = REGISTER;
-//
-//        RegisterFragment fragment = new RegisterFragment();
-//        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-//
-//        transaction.replace(R.id.login_placeholder, fragment);
-////        transaction.setCustomAnimations(R.anim.abc_shrink_fade_out_from_bottom, R.anim.abc_grow_fade_in_from_bottom);
-//
-//        transaction.addToBackStack(null);
-//
-//        transaction.commit();
-//    }
+    public void startRegisterFragment() {
+        MODE = REGISTER;
+
+        RegisterFragment fragment = new RegisterFragment();
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+
+        transaction.replace(R.id.login_placeholder, fragment);
+//        transaction.setCustomAnimations(R.anim.abc_shrink_fade_out_from_bottom, R.anim.abc_grow_fade_in_from_bottom);
+
+        transaction.addToBackStack(null);
+
+        transaction.commit();
+    }
 
     public void startLoginFragment() {
         MODE = LOGIN;
