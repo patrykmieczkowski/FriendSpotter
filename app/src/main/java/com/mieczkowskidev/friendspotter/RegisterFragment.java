@@ -15,6 +15,7 @@ import com.mieczkowskidev.friendspotter.Objects.User;
 import com.mieczkowskidev.friendspotter.Objects.UserLogin;
 import com.mieczkowskidev.friendspotter.Utils.GenericConverter;
 
+import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import rx.Subscriber;
 import rx.functions.Action1;
@@ -197,11 +198,16 @@ public class RegisterFragment extends Fragment {
     private void registerUserOnServer(UserLogin userLogin) {
         Log.d(TAG, "registerUserOnServer() " + userLogin.toString());
 
+        UserLogin userLogin1 = new UserLogin();
         startRegisterLoading();
+
+//        RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint(Config.RestAPI).build();
 
         GenericConverter<User> userRegisterGenericConverter = new GenericConverter<>(Config.RestAPI, User.class);
 
         RestAPI restAPI = userRegisterGenericConverter.getRestAdapter().create(RestAPI.class);
+
+//        RestAPI restAPI = restAdapter.create(RestAPI.class);
 
         restAPI.registerUser(userLogin)
                 .subscribe(new Subscriber<User>() {

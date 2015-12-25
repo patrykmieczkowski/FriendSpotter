@@ -9,6 +9,7 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 
+import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
 import retrofit.converter.GsonConverter;
 
@@ -33,8 +34,19 @@ public class GenericConverter<T> {
         });
         Gson gson = builder.create();
         GsonConverter converter = new GsonConverter(gson);
-        adapter = new RestAdapter.Builder().setEndpoint(endpoint).setConverter(converter).build();
+        adapter = new RestAdapter.Builder()
+                .setEndpoint(endpoint)
+                .setConverter(converter)
+                .setRequestInterceptor(requestInterceptor)
+                .build();
     }
+
+    RequestInterceptor requestInterceptor = new RequestInterceptor() {
+        @Override
+        public void intercept(RequestFacade request) {
+            request.addHeader("Content-Type", "application/json");
+        }
+    };
 
     private static abstract class Deserializer<T> implements JsonDeserializer<T> {
 

@@ -119,11 +119,11 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-//    public void startMainActivity() {
-//        Intent intent = new Intent(this, MainActivity.class);
-//        startActivity(intent);
-//        finish();
-//    }
+    public void startMainActivity() {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+        finish();
+    }
 
     public boolean isOnline() {
         ConnectivityManager cm =

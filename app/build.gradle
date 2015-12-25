@@ -29,4 +29,4 @@ dependencies {
     compile 'com.google.android.gms:play-services-location:7.5.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.squareup.retrofit:retrofit:1.9.0'
-    compile 'io.reactivex:rxjava:1.0.10'}
+    compile 'io.reactivex:rxandroid:0.25.0' }
