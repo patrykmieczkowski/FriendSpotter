@@ -9,20 +9,28 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.javadocmd.simplelatlng.util.LengthUnit;
 import com.mieczkowskidev.friendspotter.API.RestAPI;
 import com.mieczkowskidev.friendspotter.Objects.User;
 import com.mieczkowskidev.friendspotter.Utils.GenericConverter;
+import com.trnql.smart.base.SmartCompatActivity;
+import com.trnql.smart.location.AddressEntry;
+import com.trnql.smart.people.PersonEntry;
+import com.trnql.smart.places.PlaceEntry;
+import com.trnql.smart.weather.WeatherEntry;
+import com.trnql.zen.core.AppData;
+
+import java.util.List;
 
 import retrofit.RestAdapter;
 import retrofit.client.Response;
 import rx.Subscriber;
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends SmartCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -33,6 +41,15 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        Log.d(TAG, "onCreate starting trnql services");
+        getAppData().setApiKey("3bd5eb7e-64c7-4ff7-ad3b-f8e4ceb21e18");
+        getPeopleManager().setUserToken("McPusz-200");
+        getPeopleManager().setProductName("FSpotter");
+        getPeopleManager().setDataPayload("Magdusz");
+        AppData.startAllServices(this);
+        int searchRadius = getPeopleManager().getSearchRadius();
+        Log.d(TAG, "SmartPeople Data for users within " + searchRadius + " meters\n");
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -109,6 +126,65 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        AppData.stopAllServices(this);
+    }
+
+
+    @Override
+    protected void smartAddressChange(AddressEntry address) {
+        super.smartAddressChange(address);
+        Log.d(TAG, "smartAddressChange() called with: " + "address = [" + address.toString() + "]");
+
+    }
+
+    @Override
+    protected void smartWeatherChange(WeatherEntry weather) {
+        super.smartWeatherChange(weather);
+        Log.d(TAG, "smartWeatherChange() called with: " + "weather = [" + weather.getWeatherSummaryAsString() + "]");
+
+    }
+
+    @Override
+    protected void smartPeopleChange(List<PersonEntry> people) {
+        super.smartPeopleChange(people);
+        
+        if(people != null) {
+            
+            for (PersonEntry personEntry : people) {
+                Log.d(TAG, "people: " + personEntry.getUserToken() + ", activity: "
+                        + personEntry.getActivityString() + ", distance: " + personEntry.getDistanceFromUser()
+                + "m, datapayload: " + personEntry.getDataPayload());
+//            person.getUserToken();          // "2948574687"
+//            person.getLatitude();           // 36.068821
+//            person.getLongitude();          // -112.152823
+//            person.getActivityString();     // "Running, Driving, etc."
+//            person.getDistanceFromUser();   // 592 meters
+//            person.getTimeStamp();          // Date object
+//            person.getDataPayload();        // {"name":"Johnny", "status":"busy"} - Your own custom data!
+
+            }
+        } else {
+            Log.d(TAG, "smartPeopleChange: people is null :(");
+        }
+    }
+
+    @Override
+    protected void smartPlacesChange(List<PlaceEntry> places) {
+        super.smartPlacesChange(places);
+
+        if (places != null){
+
+            for (PlaceEntry placeEntry : places){
+
+                Log.i(TAG, "place: " + placeEntry.getName() + ", address: " + placeEntry.getAddress()
+                + ", hours: " + placeEntry.getHoursString());
+            }
+        }
     }
 
     private void testReq(){
