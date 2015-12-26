@@ -15,7 +15,9 @@ import android.view.MenuItem;
 
 import com.javadocmd.simplelatlng.util.LengthUnit;
 import com.mieczkowskidev.friendspotter.API.RestAPI;
+import com.mieczkowskidev.friendspotter.Fragments.SpotterFragment;
 import com.mieczkowskidev.friendspotter.Objects.User;
+import com.mieczkowskidev.friendspotter.Utils.FragmentSwitcher;
 import com.mieczkowskidev.friendspotter.Utils.GenericConverter;
 import com.trnql.smart.base.SmartCompatActivity;
 import com.trnql.smart.location.AddressEntry;
@@ -51,16 +53,6 @@ public class MainActivity extends SmartCompatActivity
         int searchRadius = getPeopleManager().getSearchRadius();
         Log.d(TAG, "SmartPeople Data for users within " + searchRadius + " meters\n");
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Test request", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-                testReq();
-            }
-        });
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -69,6 +61,8 @@ public class MainActivity extends SmartCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        showStartingFragment();
     }
 
     @Override
@@ -90,12 +84,8 @@ public class MainActivity extends SmartCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
@@ -109,18 +99,20 @@ public class MainActivity extends SmartCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+        switch (id){
+            case R.id.nav_spotter:
+                Log.d(TAG, "onNavigationItemSelected: Spotter");
+                FragmentSwitcher.switchToFragment(this, new SpotterFragment(), R.id.main_activity_placeholder);
+                break;
+            case R.id.nav_friends:
+                Log.d(TAG, "onNavigationItemSelected: Friends");
+                break;
+            case R.id.nav_events:
+                Log.d(TAG, "onNavigationItemSelected: Events");
+                break;
+            case R.id.nav_profile:
+                Log.d(TAG, "onNavigationItemSelected: Profile");
+                break;
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -214,5 +206,11 @@ public class MainActivity extends SmartCompatActivity
 
                     }
                 });
+    }
+
+    private void showStartingFragment(){
+        Log.d(TAG, "showStartingFragment()");
+
+        FragmentSwitcher.switchToFragment(this, new SpotterFragment(), R.id.main_activity_placeholder);
     }
 }

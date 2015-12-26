@@ -1,8 +1,10 @@
-package com.mieczkowskidev.friendspotter;
+package com.mieczkowskidev.friendspotter.Utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.widget.EditText;
+
+import com.mieczkowskidev.friendspotter.R;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

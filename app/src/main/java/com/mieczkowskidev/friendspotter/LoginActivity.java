@@ -16,6 +16,9 @@ import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
+import com.mieczkowskidev.friendspotter.Fragments.LoginFragment;
+import com.mieczkowskidev.friendspotter.Fragments.RegisterFragment;
+
 public class LoginActivity extends AppCompatActivity {
 
     private static final String TAG = LoginActivity.class.getSimpleName();

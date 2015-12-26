@@ -1,4 +1,4 @@
-package com.mieczkowskidev.friendspotter;
+package com.mieczkowskidev.friendspotter.Fragments;
 
 import android.app.Fragment;
 import android.os.Bundle;
@@ -13,8 +13,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.mieczkowskidev.friendspotter.API.RestAPI;
+import com.mieczkowskidev.friendspotter.Config;
+import com.mieczkowskidev.friendspotter.LoginActivity;
+import com.mieczkowskidev.friendspotter.Utils.LoginManager;
 import com.mieczkowskidev.friendspotter.Objects.User;
 import com.mieczkowskidev.friendspotter.Objects.UserLogin;
+import com.mieczkowskidev.friendspotter.R;
 import com.mieczkowskidev.friendspotter.Utils.GenericConverter;
 
 import rx.functions.Action1;
