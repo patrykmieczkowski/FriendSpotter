@@ -26,6 +26,7 @@ import com.trnql.smart.places.PlaceEntry;
 import com.trnql.smart.weather.WeatherEntry;
 import com.trnql.zen.core.AppData;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit.RestAdapter;
@@ -36,6 +37,9 @@ public class MainActivity extends SmartCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
+
+    public static List<PersonEntry> personEntryList = new ArrayList<>();
+    public static List<PlaceEntry> placeEntryList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +88,7 @@ public class MainActivity extends SmartCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
         int id = item.getItemId();
 
         if (id == R.id.action_settings) {
@@ -99,7 +104,7 @@ public class MainActivity extends SmartCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        switch (id){
+        switch (id) {
             case R.id.nav_spotter:
                 Log.d(TAG, "onNavigationItemSelected: Spotter");
                 FragmentSwitcher.switchToFragment(this, new SpotterFragment(), R.id.main_activity_placeholder);
@@ -144,24 +149,32 @@ public class MainActivity extends SmartCompatActivity
     @Override
     protected void smartPeopleChange(List<PersonEntry> people) {
         super.smartPeopleChange(people);
-        
-        if(people != null) {
-            
-            for (PersonEntry personEntry : people) {
-                Log.d(TAG, "people: " + personEntry.getUserToken() + ", activity: "
-                        + personEntry.getActivityString() + ", distance: " + personEntry.getDistanceFromUser()
-                + "m, datapayload: " + personEntry.getDataPayload());
-//            person.getUserToken();          // "2948574687"
-//            person.getLatitude();           // 36.068821
-//            person.getLongitude();          // -112.152823
-//            person.getActivityString();     // "Running, Driving, etc."
-//            person.getDistanceFromUser();   // 592 meters
-//            person.getTimeStamp();          // Date object
-//            person.getDataPayload();        // {"name":"Johnny", "status":"busy"} - Your own custom data!
 
+        if (people != null) {
+
+            Log.d(TAG, "smartPeopleChange() called with: " + "people = [" + people.size() + "]");
+
+            if (personEntryList != null) {
+                personEntryList.clear();
+                personEntryList = people;
+            } else {
+                personEntryList = people;
             }
-        } else {
-            Log.d(TAG, "smartPeopleChange: people is null :(");
+
+//            for (PersonEntry personEntry : people) {
+//                Log.d(TAG, "people: " + personEntry.getUserToken() + ", activity: "
+//                        + personEntry.getActivityString() + ", distance: " + personEntry.getDistanceFromUser()
+//                + "m, datapayload: " + personEntry.getDataPayload());
+//
+////            person.getUserToken();          // "2948574687"
+////            person.getLatitude();           // 36.068821
+////            person.getLongitude();          // -112.152823
+////            person.getActivityString();     // "Running, Driving, etc."
+////            person.getDistanceFromUser();   // 592 meters
+////            person.getTimeStamp();          // Date object
+////            person.getDataPayload();        // {"name":"Johnny", "status":"busy"} - Your own custom data!
+//
+//            }
         }
     }
 
@@ -169,17 +182,23 @@ public class MainActivity extends SmartCompatActivity
     protected void smartPlacesChange(List<PlaceEntry> places) {
         super.smartPlacesChange(places);
 
-        if (places != null){
+        if (places != null) {
 
-            for (PlaceEntry placeEntry : places){
+            Log.d(TAG, "smartPlacesChange() called with: " + "places = [" + places.size() + "]");
 
-                Log.i(TAG, "place: " + placeEntry.getName() + ", address: " + placeEntry.getAddress()
-                + ", hours: " + placeEntry.getHoursString());
+            if (placeEntryList != null) {
+                placeEntryList.clear();
+                placeEntryList = places;
+            } else {
+                placeEntryList = places;
             }
+
         }
+
     }
 
-    private void testReq(){
+
+    private void testReq() {
         Log.d(TAG, "testReq()");
 
         GenericConverter<User> userLoginGenericConverter = new GenericConverter<>(Config.RestAPI, User.class);
@@ -208,7 +227,7 @@ public class MainActivity extends SmartCompatActivity
                 });
     }
 
-    private void showStartingFragment(){
+    private void showStartingFragment() {
         Log.d(TAG, "showStartingFragment()");
 
         FragmentSwitcher.switchToFragment(this, new SpotterFragment(), R.id.main_activity_placeholder);
