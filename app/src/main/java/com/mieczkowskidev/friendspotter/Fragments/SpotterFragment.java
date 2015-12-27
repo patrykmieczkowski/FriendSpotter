@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
@@ -19,12 +20,15 @@ import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.mieczkowskidev.friendspotter.MainActivity;
 import com.mieczkowskidev.friendspotter.R;
 import com.trnql.smart.base.SmartFragment;
 import com.trnql.smart.people.PersonEntry;
 import com.trnql.smart.places.PlaceEntry;
+
+import java.util.HashMap;
 
 /**
  * Created by Patryk Mieczkowski on 26.12.15
@@ -37,6 +41,8 @@ public class SpotterFragment extends SmartFragment {
     private GoogleMap googleMap;
     private ProgressBar mapProgressBar;
     private FloatingActionButton refreshButton;
+
+    private HashMap<Marker, PersonEntry> markerPersonEntryHashMap = new HashMap<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -118,6 +124,7 @@ public class SpotterFragment extends SmartFragment {
                     drawPlaceMarkers();
 
                     setListeners();
+                    setInfoWindowAdapter();
 
                 }
             });
@@ -131,14 +138,19 @@ public class SpotterFragment extends SmartFragment {
             progressBarAction(false);
             Log.d(TAG, "drawPeopleMarkers() for " + MainActivity.personEntryList.size());
 
+            markerPersonEntryHashMap.clear();
+
             for (PersonEntry personEntry : MainActivity.personEntryList) {
 
-                googleMap.addMarker(
+                Marker marker = googleMap.addMarker(
                         new MarkerOptions()
                                 .position(new LatLng(personEntry.getLatitude(), personEntry.getLongitude()))
                                 .title(personEntry.getUserToken())
                                 .snippet(String.valueOf(personEntry.getDistanceFromUser()) + " m")
                                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_friend2)));
+
+                markerPersonEntryHashMap.put(marker, personEntry);
+
 
             }
         }
@@ -180,6 +192,45 @@ public class SpotterFragment extends SmartFragment {
             });
         }
 
+    }
+
+    private void setInfoWindowAdapter() {
+
+        googleMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+            @Override
+            public View getInfoWindow(Marker marker) {
+                return null;
+            }
+
+            @Override
+            public View getInfoContents(Marker marker) {
+
+                if (markerPersonEntryHashMap.containsKey(marker)) {
+                    PersonEntry personEntry = markerPersonEntryHashMap.get(marker);
+                    View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_marker_people, null);
+
+                    TextView usernameText = (TextView) view.findViewById(R.id.marker_people_username);
+
+                    usernameText.setText(personEntry.getUserToken());
+                    return view;
+                } else {
+                    return null;
+                }
+            }
+        });
+
+        googleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+            @Override
+            public void onInfoWindowClick(Marker marker) {
+                if (markerPersonEntryHashMap.containsKey(marker)) {
+                    PersonEntry personEntry = markerPersonEntryHashMap.get(marker);
+
+                    if (getActivity() instanceof MainActivity) {
+                        ((MainActivity) getActivity()).startUserDetailsActivity();
+                    }
+                }
+            }
+        });
     }
 
     private void progressBarAction(boolean action) {

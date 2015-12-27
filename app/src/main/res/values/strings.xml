@@ -11,7 +11,7 @@
     <string name="drawer_friends">Friends</string>
     <string name="drawer_events">Events</string>
     <string name="drawer_profile">Profile</string>
-    
+
     <string name="email_label_text">Email</string>
     <string name="password_label_text">Password</string>
     <string name="re_password_label_text">Confirm Password</string>

@@ -1,66 +1,71 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/spotter_coordinator_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="20dp"
     android:background="@drawable/event_background">
 
-    <EditText
-        android:id="@+id/event_title"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginBottom="20dp"
-        android:background="@drawable/event_pole_male"
-        android:hint="Title"
-        android:padding="5dp"
-        android:textAlignment="center" />
+        android:layout_height="match_parent"
+        android:layout_margin="20dp">
 
-    <ImageView
-        android:id="@+id/event_photo"
-        android:layout_width="152dp"
-        android:layout_height="213dp"
-        android:layout_below="@id/event_title"
-        android:layout_marginBottom="20dp"
-        android:src="@drawable/event_photo" />
+        <EditText
+            android:id="@+id/event_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/event_pole_male"
+            android:hint="Title"
+            android:padding="5dp"
+            android:textAlignment="center" />
 
-    <EditText
-        android:id="@+id/event_description"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@id/event_photo"
-        android:layout_alignTop="@id/event_photo"
-        android:layout_below="@id/event_title"
-        android:layout_marginStart="20dp"
-        android:layout_toEndOf="@id/event_photo"
-        android:background="@drawable/event_pole_male"
-        android:gravity="top|start"
-        android:hint="Short description"
-        android:inputType="textMultiLine"
-        android:padding="5dp"
-        android:textAlignment="viewStart" />
+        <ImageView
+            android:id="@+id/event_photo"
+            android:layout_width="152dp"
+            android:layout_height="213dp"
+            android:layout_below="@id/event_title"
+            android:layout_marginBottom="20dp"
+            android:src="@drawable/event_photo" />
 
-    <TextView
-        android:id="@+id/event_address_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/event_photo"
-        android:background="@drawable/event_pole_male"
-        android:padding="5dp"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        tools:text="ul. Kartuszynskie 150" />
+        <EditText
+            android:id="@+id/event_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/event_photo"
+            android:layout_alignTop="@id/event_photo"
+            android:layout_below="@id/event_title"
+            android:layout_marginStart="20dp"
+            android:layout_toEndOf="@id/event_photo"
+            android:background="@drawable/event_pole_male"
+            android:gravity="top|start"
+            android:hint="Short description"
+            android:inputType="textMultiLine"
+            android:padding="5dp"
+            android:textAlignment="viewStart" />
 
-    <TextView
-        android:id="@+id/event_invite_friends"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/event_address_text"
-        android:layout_marginTop="20dp"
-        android:background="@drawable/event_pole_male"
-        android:padding="5dp"
-        android:text="Invite friends"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        <TextView
+            android:id="@+id/event_address_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/event_photo"
+            android:background="@drawable/event_pole_male"
+            android:padding="5dp"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            tools:text="ul. Kartuszynskie 150" />
+
+        <TextView
+            android:id="@+id/event_invite_friends"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/event_address_text"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/event_pole_male"
+            android:padding="5dp"
+            android:text="Invite friends"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    </RelativeLayout>
 
 </RelativeLayout>

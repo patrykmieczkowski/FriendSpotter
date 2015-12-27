@@ -1,5 +1,6 @@
 package com.mieczkowskidev.friendspotter;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.support.design.widget.NavigationView;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 import com.google.android.gms.maps.model.LatLng;
 import com.mieczkowskidev.friendspotter.API.RestAPI;
 import com.mieczkowskidev.friendspotter.Fragments.EventFragment;
+import com.mieczkowskidev.friendspotter.Fragments.ProfileFragment;
 import com.mieczkowskidev.friendspotter.Fragments.SpotterFragment;
 import com.mieczkowskidev.friendspotter.Objects.User;
 import com.mieczkowskidev.friendspotter.Utils.FragmentSwitcher;
@@ -122,6 +124,7 @@ public class MainActivity extends SmartCompatActivity
                 break;
             case R.id.nav_profile:
                 Log.d(TAG, "onNavigationItemSelected: Profile");
+                FragmentSwitcher.switchToFragment(this, ProfileFragment.newInstance(), R.id.main_activity_placeholder);
                 break;
         }
 
@@ -260,5 +263,11 @@ public class MainActivity extends SmartCompatActivity
         Log.d(TAG, "showStartingFragment()");
 
         FragmentSwitcher.switchToFragment(this, new SpotterFragment(), R.id.main_activity_placeholder);
+    }
+
+    public void startUserDetailsActivity(){
+
+        Intent intent = new Intent(this, UserDetailsActivity.class);
+        startActivity(intent);
     }
 }
