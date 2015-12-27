@@ -3,12 +3,15 @@ package com.mieczkowskidev.friendspotter.Fragments;
 import android.app.FragmentManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -33,10 +36,16 @@ public class SpotterFragment extends SmartFragment {
     private MapFragment mapFragment;
     private GoogleMap googleMap;
     private ProgressBar mapProgressBar;
+    private FloatingActionButton refreshButton;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_spotter, container, false);
+
+        AppCompatActivity appCompatActivity = (AppCompatActivity) getActivity();
+        if (appCompatActivity.getSupportActionBar() != null) {
+            appCompatActivity.getSupportActionBar().setTitle(getString(R.string.drawer_spotter));
+        }
 
         initViews(view);
 
@@ -54,6 +63,20 @@ public class SpotterFragment extends SmartFragment {
     private void initViews(View view) {
 
         mapProgressBar = (ProgressBar) view.findViewById(R.id.map_progress_bar);
+        refreshButton = (FloatingActionButton) view.findViewById(R.id.spotter_floating_refresh_button);
+    }
+
+    private void setListeners() {
+
+        refreshButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                googleMap.clear();
+                zoomMapToLocation();
+                drawPeopleMarkers();
+                drawPlaceMarkers();
+            }
+        });
     }
 
     private void initMap() {
@@ -89,10 +112,12 @@ public class SpotterFragment extends SmartFragment {
                 public void onMapLoaded() {
 
                     googleMap.setMyLocationEnabled(true);
-//                    zoomMapToLocation();
 
+                    zoomMapToLocation();
                     drawPeopleMarkers();
                     drawPlaceMarkers();
+
+                    setListeners();
 
                 }
             });
@@ -139,20 +164,21 @@ public class SpotterFragment extends SmartFragment {
     }
 
     private void zoomMapToLocation() {
-        LatLng latLng = new LatLng(googleMap.getMyLocation().getLatitude(),
-                googleMap.getMyLocation().getLongitude());
-        CameraUpdate update = CameraUpdateFactory.newLatLngZoom(latLng, 15);
-        googleMap.animateCamera(update, 400, new GoogleMap.CancelableCallback() {
-            @Override
-            public void onFinish() {
 
-            }
+        if (MainActivity.currentPosition != null) {
+            CameraUpdate update = CameraUpdateFactory.newLatLngZoom(MainActivity.currentPosition, 15);
+            googleMap.animateCamera(update, 700, new GoogleMap.CancelableCallback() {
+                @Override
+                public void onFinish() {
 
-            @Override
-            public void onCancel() {
+                }
 
-            }
-        });
+                @Override
+                public void onCancel() {
+
+                }
+            });
+        }
 
     }
 

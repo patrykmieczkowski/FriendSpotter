@@ -1,10 +1,7 @@
 package com.mieczkowskidev.friendspotter;
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.util.Log;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -12,15 +9,20 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
-import com.javadocmd.simplelatlng.util.LengthUnit;
+import com.google.android.gms.maps.model.LatLng;
 import com.mieczkowskidev.friendspotter.API.RestAPI;
+import com.mieczkowskidev.friendspotter.Fragments.EventFragment;
 import com.mieczkowskidev.friendspotter.Fragments.SpotterFragment;
 import com.mieczkowskidev.friendspotter.Objects.User;
 import com.mieczkowskidev.friendspotter.Utils.FragmentSwitcher;
 import com.mieczkowskidev.friendspotter.Utils.GenericConverter;
+import com.mieczkowskidev.friendspotter.Utils.WeatherManager;
 import com.trnql.smart.base.SmartCompatActivity;
 import com.trnql.smart.location.AddressEntry;
+import com.trnql.smart.location.LocationEntry;
 import com.trnql.smart.people.PersonEntry;
 import com.trnql.smart.places.PlaceEntry;
 import com.trnql.smart.weather.WeatherEntry;
@@ -40,33 +42,46 @@ public class MainActivity extends SmartCompatActivity
 
     public static List<PersonEntry> personEntryList = new ArrayList<>();
     public static List<PlaceEntry> placeEntryList = new ArrayList<>();
+    public static String addressString;
+    public static LatLng currentPosition;
+
+    private Toolbar toolbar;
+    private DrawerLayout drawer;
+    private RelativeLayout drawerHeaderLayout;
+    private TextView drawerWeatherCond, drawerTemp;
+    private String temperature, weatherConditions;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        getViews();
 
         Log.d(TAG, "onCreate starting trnql services");
         getAppData().setApiKey("3bd5eb7e-64c7-4ff7-ad3b-f8e4ceb21e18");
-        getPeopleManager().setUserToken("McPusz-200");
+        getPeopleManager().setUserToken("Patusz-100");
         getPeopleManager().setProductName("FSpotter");
-        getPeopleManager().setDataPayload("Magdusz");
+//        getPeopleManager().setDataPayload("Magdusz");
         AppData.startAllServices(this);
         int searchRadius = getPeopleManager().getSearchRadius();
         Log.d(TAG, "SmartPeople Data for users within " + searchRadius + " meters\n");
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+        prepareNavigationDrawer();
 
         showStartingFragment();
+    }
+
+    private void getViews() {
+
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawerHeaderLayout = (RelativeLayout) findViewById(R.id.nav_drawer_header_layout);
+        drawerWeatherCond = (TextView) findViewById(R.id.nav_drawer_weather_cond);
+        drawerTemp = (TextView) findViewById(R.id.nav_drawer_weather_temp);
+
     }
 
     @Override
@@ -86,17 +101,6 @@ public class MainActivity extends SmartCompatActivity
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        int id = item.getItemId();
-
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -109,11 +113,12 @@ public class MainActivity extends SmartCompatActivity
                 Log.d(TAG, "onNavigationItemSelected: Spotter");
                 FragmentSwitcher.switchToFragment(this, new SpotterFragment(), R.id.main_activity_placeholder);
                 break;
-            case R.id.nav_friends:
-                Log.d(TAG, "onNavigationItemSelected: Friends");
-                break;
             case R.id.nav_events:
                 Log.d(TAG, "onNavigationItemSelected: Events");
+                FragmentSwitcher.switchToFragment(this, EventFragment.newInstance(), R.id.main_activity_placeholder);
+                break;
+            case R.id.nav_friends:
+                Log.d(TAG, "onNavigationItemSelected: Friends");
                 break;
             case R.id.nav_profile:
                 Log.d(TAG, "onNavigationItemSelected: Profile");
@@ -136,7 +141,15 @@ public class MainActivity extends SmartCompatActivity
     protected void smartAddressChange(AddressEntry address) {
         super.smartAddressChange(address);
         Log.d(TAG, "smartAddressChange() called with: " + "address = [" + address.toString() + "]");
+        addressString = address.toString();
+    }
 
+    @Override
+    protected void smartLatLngChange(LocationEntry location) {
+        super.smartLatLngChange(location);
+        Log.d(TAG, "smartLatLngChange() called with: " + "location = [" + location.getLatLng().toString() + "]");
+
+        currentPosition  = new LatLng(location.getLatitude(), location.getLongitude());
     }
 
     @Override
@@ -144,6 +157,11 @@ public class MainActivity extends SmartCompatActivity
         super.smartWeatherChange(weather);
         Log.d(TAG, "smartWeatherChange() called with: " + "weather = [" + weather.getWeatherSummaryAsString() + "]");
 
+        temperature = String.valueOf(weather.getCurrentTemp()) + "°C";
+        weatherConditions = weather.getCurrentConditionsDescriptionAsString();
+        drawerTemp.setText(temperature);
+        drawerWeatherCond.setText(weatherConditions);
+        drawerHeaderLayout.setBackgroundResource(WeatherManager.getDrawableForWeather(weatherConditions));
     }
 
     @Override
@@ -195,6 +213,17 @@ public class MainActivity extends SmartCompatActivity
 
         }
 
+    }
+
+    private void prepareNavigationDrawer() {
+
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
     }
 
 

@@ -12,6 +12,5 @@ public class FSpotter extends AppData {
     @Override
     public void onCreate() {
         super.onCreate();
-         Toast.makeText(this, "APPDATA OVERRIDDEN", Toast.LENGTH_LONG).show();
     }
 }
