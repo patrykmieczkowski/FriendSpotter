@@ -18,6 +18,7 @@ import com.mieczkowskidev.friendspotter.Objects.User;
 import com.mieczkowskidev.friendspotter.Objects.UserLogin;
 import com.mieczkowskidev.friendspotter.R;
 import com.mieczkowskidev.friendspotter.Utils.GenericConverter;
+import com.mieczkowskidev.friendspotter.gcm.GCMManager;
 
 import retrofit.RetrofitError;
 import rx.Subscriber;
@@ -172,7 +173,7 @@ public class RegisterFragment extends Fragment {
         String email = emailEditText.getText().toString();
         String password = passwordEditText.getText().toString();
 
-        UserLogin userLogin = new UserLogin(username, email, password);
+        UserLogin userLogin = new UserLogin(username, email, password, GCMManager.getGcmKeyString(getActivity()));
 
         registerUserOnServer(userLogin);
     }
@@ -200,7 +201,6 @@ public class RegisterFragment extends Fragment {
     private void registerUserOnServer(UserLogin userLogin) {
         Log.d(TAG, "registerUserOnServer() " + userLogin.toString());
 
-        UserLogin userLogin1 = new UserLogin();
         startRegisterLoading();
 
 //        RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint(Config.RestAPI).build();

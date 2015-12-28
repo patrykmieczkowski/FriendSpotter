@@ -41,15 +41,14 @@ public class LoginActivity extends AppCompatActivity {
 
         getViews();
         startLoginFragment();
+        registerPushNotificationGcm();
 
         LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
-        registerPushNotificationGcm();
 
 //        if (!isOnline()) {
 //            showAlertNoInternet();
 //        }
-//
+
         if (isOnline() && !manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             showAlertNoGPS();
         }

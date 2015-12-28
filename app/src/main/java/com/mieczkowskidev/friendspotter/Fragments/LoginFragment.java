@@ -22,6 +22,7 @@ import com.mieczkowskidev.friendspotter.Objects.User;
 import com.mieczkowskidev.friendspotter.Objects.UserLogin;
 import com.mieczkowskidev.friendspotter.R;
 import com.mieczkowskidev.friendspotter.Utils.GenericConverter;
+import com.mieczkowskidev.friendspotter.gcm.GCMManager;
 
 import rx.functions.Action1;
 
@@ -35,7 +36,6 @@ public class LoginFragment extends Fragment {
     private EditText emailEditText, passwordEditText;
     private TextInputLayout emailInputLayout, passwordInputLayout;
     private ProgressBar loginProgressBar;
-    private TextView titleText;
     private LoginActivity loginActivity;
 
     @Override
@@ -66,7 +66,6 @@ public class LoginFragment extends Fragment {
         loginButton = (Button) view.findViewById(R.id.login_button);
 
         loginProgressBar = (ProgressBar) view.findViewById(R.id.login_progress_bar);
-        titleText = (TextView) view.findViewById(R.id.title_text_login);
 
 //        Typeface myTypeface = Typeface.createFromAsset(getActivity().getAssets(), "fonts/timeless_bold.ttf");
 //        titleText.setTypeface(myTypeface);
@@ -232,7 +231,7 @@ public class LoginFragment extends Fragment {
         String username = emailEditText.getText().toString();
         String password = passwordEditText.getText().toString();
 
-        UserLogin userLogin = new UserLogin(username, password);
+        UserLogin userLogin = new UserLogin(username, password, GCMManager.getGcmKeyString(getActivity()));
 
         loginUserOnServer(userLogin);
     }

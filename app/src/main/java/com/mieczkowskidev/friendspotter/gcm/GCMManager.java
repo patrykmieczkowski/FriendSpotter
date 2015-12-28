@@ -162,6 +162,12 @@ public class GCMManager {
         return getContext().getSharedPreferences(context.getString(R.string.shared_preferences_gcm_key), Context.MODE_PRIVATE);
     }
 
+    public static String getGcmKeyString(Context context){
+
+        return context.getSharedPreferences(context.getString(R.string.shared_preferences_gcm_key), Context.MODE_PRIVATE)
+                .getString(context.getString(R.string.shared_preferences_gcm_registration_id), "");
+    }
+
     /**
      * Check the device to make sure it has the Google Play Services APK. If
      * it doesn't, display a dialog that allows users to download the APK from
