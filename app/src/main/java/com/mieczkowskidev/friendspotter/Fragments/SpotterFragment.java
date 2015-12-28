@@ -178,7 +178,7 @@ public class SpotterFragment extends SmartFragment {
     private void zoomMapToLocation() {
 
         if (MainActivity.currentPosition != null) {
-            CameraUpdate update = CameraUpdateFactory.newLatLngZoom(MainActivity.currentPosition, 15);
+            CameraUpdate update = CameraUpdateFactory.newLatLngZoom(MainActivity.currentPosition, 14);
             googleMap.animateCamera(update, 700, new GoogleMap.CancelableCallback() {
                 @Override
                 public void onFinish() {

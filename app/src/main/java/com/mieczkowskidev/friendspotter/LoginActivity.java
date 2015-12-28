@@ -50,9 +50,9 @@ public class LoginActivity extends AppCompatActivity {
 //            showAlertNoInternet();
 //        }
 //
-//        if (isOnline() && !manager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-//            showAlertNoGPS();
-//        }
+        if (isOnline() && !manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            showAlertNoGPS();
+        }
 
     }
 
@@ -172,17 +172,17 @@ public class LoginActivity extends AppCompatActivity {
         alert.show();
     }
 
-    public void hideKeyboard(){
+    public void hideKeyboard() {
         Log.d(TAG, "hideKeyboard()");
 
         View view = this.getCurrentFocus();
         if (view != null) {
-            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
 
-    private void registerPushNotificationGcm(){
+    private void registerPushNotificationGcm() {
 
         GCMManager gcmManager = new GCMManager(this, Config.GCM_SENDER_ID);
         gcmManager.registerIfNeeded(new GCMManager.RegistrationCompletedHandler() {

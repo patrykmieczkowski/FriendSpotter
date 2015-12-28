@@ -8,4 +8,8 @@ public class Config {
     public static final String RestAPI = "http://stanzas.co";
 
     public static final String GCM_SENDER_ID = "1020346319750";
+
+    public static final String TOKEN = "token";
+    public static final String IMAGE = "image";
+    public static final String USERNAME = "username";
 }

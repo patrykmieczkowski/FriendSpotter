@@ -1,6 +1,8 @@
 package com.mieczkowskidev.friendspotter.Fragments;
 
 import android.app.Fragment;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.util.Log;
@@ -166,7 +168,7 @@ public class LoginFragment extends Fragment {
         getDataFromFormula();
     }
 
-//    private void getDataFromFormula() {
+    //    private void getDataFromFormula() {
 //        Log.d(TAG, "getDataFromFormula()");
 //
 //
@@ -289,10 +291,15 @@ public class LoginFragment extends Fragment {
                     public void call(User user) {
                         Log.d(TAG, "call() called with: " + "user = [" + user.toString() + "]");
 
+                        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(loginActivity.getString(R.string.shared_preferences_user), Context.MODE_PRIVATE);
+                        sharedPreferences.edit().putString(Config.TOKEN, user.getAuthToken()).apply();
+                        sharedPreferences.edit().putString(Config.IMAGE, user.getImage()).apply();
+                        sharedPreferences.edit().putString(Config.USERNAME, user.getUsername()).apply();
+
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                stopLoginLoading();
+                                loginActivity.startMainActivity();
                             }
                         });
                     }

@@ -5,6 +5,7 @@
     tools:context=".LoginActivity">
 
     <ScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:scrollbarStyle="insideOverlay">
@@ -29,7 +30,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
-                android:layout_marginTop="100dp">
+                android:layout_marginTop="120dp"
+                android:paddingEnd="20dp"
+                android:paddingStart="20dp">
 
                 <EditText
                     android:id="@+id/email_edit_text"
@@ -37,9 +40,9 @@
                     android:layout_height="match_parent"
                     android:layout_centerHorizontal="true"
                     android:ellipsize="start"
-                    android:text="test@stanzas.co"
                     android:hint="Email address"
-                    android:inputType="textEmailAddress" />
+                    android:inputType="textEmailAddress"
+                    android:text="test@stanzas.co" />
 
             </android.support.design.widget.TextInputLayout>
 
@@ -48,48 +51,59 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/email_edit_text_input_layout"
-                android:layout_marginTop="10dp">
+                android:layout_marginTop="10dp"
+                android:paddingEnd="20dp"
+                android:paddingStart="20dp">
 
                 <EditText
                     android:id="@+id/password_edit_text"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:text="password123"
                     android:layout_below="@id/email_edit_text_input_layout"
                     android:layout_centerHorizontal="true"
                     android:ellipsize="start"
                     android:hint="Password"
-                    android:inputType="textPassword" />
+                    android:inputType="textPassword"
+                    android:text="password123" />
 
             </android.support.design.widget.TextInputLayout>
 
-            <Button
-                android:id="@+id/login_button"
+            <Space
+                android:id="@+id/center_space"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_centerInParent="true" />
+
+            <Button
+                android:id="@+id/login_button"
+                android:layout_width="120dp"
+                android:layout_height="60dp"
                 android:layout_below="@id/password_edit_text_input_layout"
-                android:layout_centerInParent="true"
-                android:layout_marginTop="50dp"
-                android:paddingBottom="10dp"
-                android:text="login" />
+                android:layout_marginEnd="20dp"
+                android:layout_marginTop="60dp"
+                android:layout_toStartOf="@id/center_space"
+                android:background="@drawable/login_button"
+                android:text="@string/login_label_text" />
 
             <Button
                 android:id="@+id/register_fragment_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/login_button"
-                android:layout_centerInParent="true"
-                android:layout_marginTop="10dp"
-                android:paddingBottom="10dp"
-                android:text="register" />
+                android:layout_width="120dp"
+                android:layout_height="60dp"
+                android:layout_below="@id/password_edit_text_input_layout"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="60dp"
+                android:layout_toEndOf="@id/center_space"
+                android:background="@drawable/login_button"
+                android:text="@string/new_register_button" />
 
             <ProgressBar
                 android:id="@+id/login_progress_bar"
+                style="?android:attr/progressBarStyleLarge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/password_edit_text_input_layout"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="80dp"
+                android:layout_marginTop="60dp"
                 android:visibility="gone" />
 
         </RelativeLayout>

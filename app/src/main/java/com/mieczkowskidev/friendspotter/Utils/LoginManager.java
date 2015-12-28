@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.widget.EditText;
 
+import com.mieczkowskidev.friendspotter.Config;
 import com.mieczkowskidev.friendspotter.R;
 
 import java.util.regex.Matcher;
@@ -35,6 +36,21 @@ public class LoginManager {
 
         return "Token " + context.getSharedPreferences
                 (context.getString(R.string.shared_preferences_user), Context.MODE_PRIVATE)
-                .getString("token", "");
+                .getString(Config.TOKEN, "");
+    }
+
+    public static String getUserImageUrl(Context context){
+
+        return Config.RestAPI + "/" + context.getSharedPreferences
+                (context.getString(R.string.shared_preferences_user), Context.MODE_PRIVATE)
+                .getString(Config.IMAGE, "");
+    }
+
+
+    public static String getUserUsername(Context context){
+
+        return context.getSharedPreferences
+                (context.getString(R.string.shared_preferences_user), Context.MODE_PRIVATE)
+                .getString(Config.USERNAME, "");
     }
 }

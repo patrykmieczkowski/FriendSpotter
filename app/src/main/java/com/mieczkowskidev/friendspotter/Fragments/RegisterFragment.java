@@ -220,7 +220,7 @@ public class RegisterFragment extends Fragment {
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                stopRegisterLoading();
+                                ((LoginActivity) getActivity()).startLoginFragment();
                             }
                         });
                     }
