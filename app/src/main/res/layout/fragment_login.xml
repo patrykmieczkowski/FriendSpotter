@@ -37,6 +37,7 @@
                     android:layout_height="match_parent"
                     android:layout_centerHorizontal="true"
                     android:ellipsize="start"
+                    android:text="test@stanzas.co"
                     android:hint="Email address"
                     android:inputType="textEmailAddress" />
 
@@ -53,6 +54,7 @@
                     android:id="@+id/password_edit_text"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:text="password123"
                     android:layout_below="@id/email_edit_text_input_layout"
                     android:layout_centerHorizontal="true"
                     android:ellipsize="start"

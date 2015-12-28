@@ -76,8 +76,8 @@ public class LoginFragment extends Fragment {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                loginFlow();
-                loginActivity.startMainActivity();
+                loginFlow();
+//                loginActivity.startMainActivity();
             }
         });
 
@@ -287,7 +287,7 @@ public class LoginFragment extends Fragment {
                 .subscribe(new Action1<User>() {
                     @Override
                     public void call(User user) {
-                        Log.d(TAG, "call() called with: " + "user = [" + user + "]");
+                        Log.d(TAG, "call() called with: " + "user = [" + user.toString() + "]");
 
                         getActivity().runOnUiThread(new Runnable() {
                             @Override

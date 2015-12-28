@@ -18,6 +18,7 @@ import android.view.inputmethod.InputMethodManager;
 
 import com.mieczkowskidev.friendspotter.Fragments.LoginFragment;
 import com.mieczkowskidev.friendspotter.Fragments.RegisterFragment;
+import com.mieczkowskidev.friendspotter.gcm.GCMManager;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -42,6 +43,8 @@ public class LoginActivity extends AppCompatActivity {
         startLoginFragment();
 
         LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+        registerPushNotificationGcm();
 
 //        if (!isOnline()) {
 //            showAlertNoInternet();
@@ -177,5 +180,16 @@ public class LoginActivity extends AppCompatActivity {
             InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
+    }
+
+    private void registerPushNotificationGcm(){
+
+        GCMManager gcmManager = new GCMManager(this, Config.GCM_SENDER_ID);
+        gcmManager.registerIfNeeded(new GCMManager.RegistrationCompletedHandler() {
+            @Override
+            public void onSuccess(String registrationId, boolean isNewRegistration) {
+                Log.d(TAG, "onSuccess() called with: " + "registrationId = [" + registrationId + "], isNewRegistration = [" + isNewRegistration + "]");
+            }
+        });
     }
 }
