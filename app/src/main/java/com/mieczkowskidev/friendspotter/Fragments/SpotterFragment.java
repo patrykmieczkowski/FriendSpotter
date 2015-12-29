@@ -4,7 +4,6 @@ import android.app.Dialog;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.location.Location;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -20,7 +19,6 @@ import android.widget.CheckBox;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -30,9 +28,14 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.mieczkowskidev.friendspotter.API.RestAPI;
 import com.mieczkowskidev.friendspotter.Config;
 import com.mieczkowskidev.friendspotter.MainActivity;
+import com.mieczkowskidev.friendspotter.Objects.Event;
+import com.mieczkowskidev.friendspotter.Objects.User;
 import com.mieczkowskidev.friendspotter.R;
+import com.mieczkowskidev.friendspotter.Utils.GenericConverter;
+import com.mieczkowskidev.friendspotter.Utils.LoginManager;
 import com.trnql.smart.base.SmartFragment;
 import com.trnql.smart.people.PersonEntry;
 import com.trnql.smart.places.PlaceEntry;
@@ -41,6 +44,11 @@ import com.trnql.zen.core.db.DbKVP;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import retrofit.RestAdapter;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
+import rx.Subscriber;
 
 /**
  * Created by Patryk Mieczkowski on 26.12.15
@@ -53,8 +61,14 @@ public class SpotterFragment extends SmartFragment {
     private GoogleMap googleMap;
     private ProgressBar mapProgressBar;
     private FloatingActionButton refreshButton;
+    private List<Event> eventList = new ArrayList<>();
 
     private HashMap<Marker, PersonEntry> markerPersonEntryHashMap = new HashMap<>();
+
+    public static SpotterFragment newInstance() {
+        SpotterFragment myFragment = new SpotterFragment();
+        return myFragment;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -133,7 +147,7 @@ public class SpotterFragment extends SmartFragment {
 //            if (Config.placeEntryList == null) {
 //                Config.placeEntryList = new ArrayList<>();
 //            }
-            Log.d(TAG, "smartPlacesChange() called with: " + "places = [" + places.toString() + "]");
+//            Log.d(TAG, "smartPlacesChange() called with: " + "places = [" + places.toString() + "]");
 
             if (Config.placeEntryList != null) {
                 Config.placeEntryList.clear();
@@ -229,6 +243,8 @@ public class SpotterFragment extends SmartFragment {
                     setListeners();
                     setInfoWindowAdapter();
 
+                    downloadEventMarkers();
+
                 }
             });
         }
@@ -246,6 +262,9 @@ public class SpotterFragment extends SmartFragment {
             }
             if (sharedPreferences.getBoolean("places_markers", true)) {
                 drawPlaceMarkers();
+            }
+            if (sharedPreferences.getBoolean("events_markers", true)) {
+                drawEventMarkers();
             }
         }
     }
@@ -302,6 +321,22 @@ public class SpotterFragment extends SmartFragment {
                                 .title(placeEntry.getName())
                                 .snippet(String.valueOf(placeEntry.getDistanceFromUser() + " m"))
                                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_places)));
+            }
+        }
+    }
+
+    private void drawEventMarkers() {
+
+        if (eventList != null && eventList.size() != 0) {
+            Log.d(TAG, "drawEventMarkers() for = [" + eventList.size() + "]");
+
+            for (Event event : eventList) {
+                googleMap.addMarker(
+                        new MarkerOptions()
+                                .position(new LatLng(event.getLat(), event.getLon()))
+                                .title(event.getTitle())
+                                .snippet(event.getDescription())
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_event)));
             }
         }
     }
@@ -386,11 +421,13 @@ public class SpotterFragment extends SmartFragment {
 
         final CheckBox peopleCheckBox = (CheckBox) dialog.findViewById(R.id.people_check_box);
         final CheckBox placesCheckBox = (CheckBox) dialog.findViewById(R.id.places_check_box);
+        final CheckBox eventsCheckBox = (CheckBox) dialog.findViewById(R.id.events_check_box);
         TextView okText = (TextView) dialog.findViewById(R.id.filter_dialog_ok);
 
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("markers", Context.MODE_PRIVATE);
         peopleCheckBox.setChecked(sharedPreferences.getBoolean("people_markers", true));
         placesCheckBox.setChecked(sharedPreferences.getBoolean("places_markers", true));
+        eventsCheckBox.setChecked(sharedPreferences.getBoolean("events_markers", true));
 
         okText.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -399,6 +436,7 @@ public class SpotterFragment extends SmartFragment {
                 SharedPreferences sharedPreferences = getActivity().getSharedPreferences("markers", Context.MODE_PRIVATE);
                 sharedPreferences.edit().putBoolean("people_markers", peopleCheckBox.isChecked()).apply();
                 sharedPreferences.edit().putBoolean("places_markers", placesCheckBox.isChecked()).apply();
+                sharedPreferences.edit().putBoolean("events_markers", eventsCheckBox.isChecked()).apply();
 
                 drawMarkers();
                 dialog.dismiss();
@@ -407,6 +445,43 @@ public class SpotterFragment extends SmartFragment {
 
         dialog.show();
 
+    }
+
+    private void downloadEventMarkers() {
+        Log.d(TAG, "downloadEventMarkers()");
+
+        GenericConverter<Event> eventGenericConverter = new GenericConverter<>(Config.RestAPI, Event.class);
+
+        String authToken = LoginManager.getTokenFromShared(getActivity());
+
+        RestAPI restAPI = eventGenericConverter.getRestAdapter().create(RestAPI.class);
+
+        restAPI.getEvents(authToken, MainActivity.currentPosition.latitude, MainActivity.currentPosition.longitude, 10, 24)
+                .subscribe(new Subscriber<List<Event>>() {
+                    @Override
+                    public void onCompleted() {
+                        Log.d(TAG, "onCompleted() called with: " + "");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e(TAG, "onError() called with: " + "e = [" + e.getMessage() + "]");
+
+                        if (e instanceof RetrofitError) {
+                            Log.e(TAG, "onError() called with: " + "e = [" + ((RetrofitError) e).getUrl() + "]");
+                        }
+
+                    }
+
+                    @Override
+                    public void onNext(final List<Event> events) {
+                        if (events != null) {
+                            Log.d(TAG, "onNext() called with: " + "events size= [" + events.size() + "]");
+
+                            eventList = events;
+                        }
+                    }
+                });
     }
 
 }

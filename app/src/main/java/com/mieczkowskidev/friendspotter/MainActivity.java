@@ -123,7 +123,7 @@ public class MainActivity extends SmartCompatActivity
         switch (id) {
             case R.id.nav_spotter:
                 Log.d(TAG, "onNavigationItemSelected: Spotter");
-                FragmentSwitcher.switchToFragment(this, new SpotterFragment(), R.id.main_activity_placeholder);
+                FragmentSwitcher.switchToFragment(this, SpotterFragment.newInstance(), R.id.main_activity_placeholder);
                 break;
             case R.id.nav_events:
                 Log.d(TAG, "onNavigationItemSelected: Events");
@@ -230,35 +230,6 @@ public class MainActivity extends SmartCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
     }
 
-
-    private void testReq() {
-        Log.d(TAG, "testReq()");
-
-        GenericConverter<User> userLoginGenericConverter = new GenericConverter<>(Config.RestAPI, User.class);
-
-        RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint(Config.RestAPI).build();
-        RestAPI restAPI = restAdapter.create(RestAPI.class);
-
-        restAPI.test()
-                .subscribe(new Subscriber<Response>() {
-                    @Override
-                    public void onCompleted() {
-                        Log.d(TAG, "onCompleted() called with: " + "");
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.e(TAG, "onError() called with: " + "e = [" + e.getMessage() + "]");
-
-                    }
-
-                    @Override
-                    public void onNext(Response response) {
-                        Log.d(TAG, "onNext() called with: " + "response = [" + response.getBody().toString() + "]");
-
-                    }
-                });
-    }
 
     private void showStartingFragment() {
         Log.d(TAG, "showStartingFragment()");

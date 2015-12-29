@@ -36,9 +36,9 @@ public interface RestAPI {
                                   @Body Event event);
 
     @GET("/get-events")
-    Observable<Response> getEvents(@Header("AuthToken") String token,
-                                   @Query("lat") Double lat,
-                                   @Query("lon") Double lon,
-                                   @Query("radius") int radius,
-                                   @Query("timeOffset") int timeOffset);
+    Observable<List<Event>> getEvents(@Header("AuthToken") String token,
+                                      @Query("lat") Double lat,
+                                      @Query("lon") Double lon,
+                                      @Query("radius") int radius,
+                                      @Query("timeOffset") int timeOffset);
 }

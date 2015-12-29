@@ -238,8 +238,17 @@ public class EventFragment extends Fragment {
 
         RestAPI restAPI = restClient.getRestAdapter().create(RestAPI.class);
 
-        Event event = new Event(eventTitleEdit.getText().toString(), eventAddress,
-                eventDescriptionEdit.getText().toString(), eventLatLng.latitude, eventLatLng.longitude, members);
+        String eventTile = eventTitleEdit.getText().toString();
+        if (eventTile.equals("")) {
+            eventTile = eventTitleEdit.getHint().toString();
+        }
+
+        String eventDescription = eventDescriptionEdit.getText().toString();
+        if (eventDescription.equals("")) {
+            eventDescription = eventDescriptionEdit.getHint().toString();
+        }
+
+        Event event = new Event(eventTile, eventAddress, eventDescription, eventLatLng.latitude, eventLatLng.longitude, members);
 
         restAPI.addEvent(authToken, event)
                 .subscribe(new Subscriber<Response>() {
