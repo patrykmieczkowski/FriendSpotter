@@ -61,7 +61,7 @@ public class LoginManager {
 
     public static String getTokenFromShared(Context context) {
 
-        return "Token " + context.getSharedPreferences
+        return context.getSharedPreferences
                 (context.getString(R.string.shared_preferences_user), Context.MODE_PRIVATE)
                 .getString(Config.TOKEN, "");
     }

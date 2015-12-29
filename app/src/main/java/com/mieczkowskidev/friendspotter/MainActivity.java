@@ -16,7 +16,9 @@ import android.widget.TextView;
 import com.google.android.gms.maps.model.LatLng;
 import com.mieczkowskidev.friendspotter.API.RestAPI;
 import com.mieczkowskidev.friendspotter.Fragments.EventFragment;
+import com.mieczkowskidev.friendspotter.Fragments.PeopleFragment;
 import com.mieczkowskidev.friendspotter.Fragments.ProfileFragment;
+import com.mieczkowskidev.friendspotter.Fragments.SettingsFragment;
 import com.mieczkowskidev.friendspotter.Fragments.SpotterFragment;
 import com.mieczkowskidev.friendspotter.Objects.User;
 import com.mieczkowskidev.friendspotter.Utils.FragmentSwitcher;
@@ -70,13 +72,13 @@ public class MainActivity extends SmartCompatActivity
             getPeopleManager().setUserToken(LoginManager.getUserUsername(this));
         } else {
             Random random = new Random();
-            String username = "Anonymous " + String.valueOf(random.nextInt(100 - 1) + 1);
+            String username = "Anonymous" + String.valueOf(random.nextInt(1000 - 1) + 1);
             getPeopleManager().setUserToken(username);
         }
         getPeopleManager().setProductName("FSpotter");
 //        getPeopleManager().setDataPayload("");
         AppData.startAllServices(this);
-        getPeopleManager().setSearchRadius(20000);
+
         int searchRadius = getPeopleManager().getSearchRadius();
         Log.d(TAG, "SmartPeople Data for users within " + searchRadius + " meters\n");
 
@@ -127,12 +129,17 @@ public class MainActivity extends SmartCompatActivity
                 Log.d(TAG, "onNavigationItemSelected: Events");
                 FragmentSwitcher.switchToFragment(this, EventFragment.newInstance(), R.id.main_activity_placeholder);
                 break;
-            case R.id.nav_friends:
-                Log.d(TAG, "onNavigationItemSelected: Friends");
+            case R.id.nav_people:
+                Log.d(TAG, "onNavigationItemSelected: People");
+                FragmentSwitcher.switchToFragment(this, PeopleFragment.newInstance(), R.id.main_activity_placeholder);
                 break;
             case R.id.nav_profile:
                 Log.d(TAG, "onNavigationItemSelected: Profile");
                 FragmentSwitcher.switchToFragment(this, ProfileFragment.newInstance(), R.id.main_activity_placeholder);
+                break;
+            case R.id.nav_settings:
+                Log.d(TAG, "onNavigationItemSelected: Settings");
+                FragmentSwitcher.switchToFragment(this, SettingsFragment.newInstance(), R.id.main_activity_placeholder);
                 break;
         }
 

@@ -1,5 +1,7 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/event_coordinator_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/event_background2">
@@ -27,6 +29,7 @@
             android:layout_height="213dp"
             android:layout_below="@id/event_title"
             android:layout_marginBottom="20dp"
+            android:scaleType="centerCrop"
             android:src="@drawable/event_photo" />
 
         <EditText
@@ -51,7 +54,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/event_photo"
             android:background="@drawable/event_pole_male"
-            android:padding="5dp"
+            android:gravity="center"
             android:textAppearance="?android:attr/textAppearanceMedium"
             tools:text="ul. Kartuszynskie 150" />
 
@@ -62,10 +65,21 @@
             android:layout_below="@id/event_address_text"
             android:layout_marginTop="20dp"
             android:background="@drawable/event_pole_male"
-            android:padding="5dp"
-            android:text="Invite friends"
+            android:gravity="center"
+            android:text="Invite will be send to all friends in radius"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
     </RelativeLayout>
 
-</RelativeLayout>
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/event_add_floating_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:clickable="true"
+        android:src="@drawable/add_icon"
+        app:backgroundTint="@color/colorAccent"
+        app:layout_anchor="@id/event_coordinator_layout"
+        app:layout_anchorGravity="bottom|right|end" />
+
+</android.support.design.widget.CoordinatorLayout>

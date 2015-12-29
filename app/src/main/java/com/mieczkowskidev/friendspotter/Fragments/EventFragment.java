@@ -8,6 +8,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,12 +23,15 @@ import android.widget.TextView;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
 import com.mieczkowskidev.friendspotter.API.RestAPI;
+import com.mieczkowskidev.friendspotter.API.RestClient;
 import com.mieczkowskidev.friendspotter.Config;
 import com.mieczkowskidev.friendspotter.MainActivity;
 import com.mieczkowskidev.friendspotter.Objects.Event;
 import com.mieczkowskidev.friendspotter.R;
 import com.mieczkowskidev.friendspotter.Utils.LoginManager;
+import com.trnql.smart.people.PersonEntry;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -36,6 +42,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import retrofit.Callback;
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
@@ -56,7 +63,10 @@ public class EventFragment extends Fragment {
     private EditText eventTitleEdit, eventDescriptionEdit;
     private String imagePath, eventAddress;
     private LatLng eventLatLng;
-
+    private FloatingActionButton addButton;
+    private CoordinatorLayout eventCoordinatorLayout;
+    private boolean isPhotoMade = false;
+    TypedFile typedFileImageSend;
 
     public static EventFragment newInstance() {
         EventFragment myFragment = new EventFragment();
@@ -85,6 +95,8 @@ public class EventFragment extends Fragment {
         eventPhoto = (ImageView) view.findViewById(R.id.event_photo);
         eventTitleEdit = (EditText) view.findViewById(R.id.event_title);
         eventDescriptionEdit = (EditText) view.findViewById(R.id.event_description);
+        addButton = (FloatingActionButton) view.findViewById(R.id.event_add_floating_button);
+        eventCoordinatorLayout = (CoordinatorLayout) view.findViewById(R.id.event_coordinator_layout);
 
     }
 
@@ -93,7 +105,18 @@ public class EventFragment extends Fragment {
         eventPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                takePictureFromCamera();
+//                if (!isPhotoMade) {
+//                    takePictureFromCamera();
+//                }
+            }
+        });
+
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                if (isPhotoMade) {
+                sendEvent();
+//                }
             }
         });
     }
@@ -185,55 +208,63 @@ public class EventFragment extends Fragment {
         }
 
         final File photoFiles = new File(file.getAbsolutePath());
-        TypedFile photoo = new TypedFile("file:", photoFiles);
+        typedFileImageSend = new TypedFile("file:", photoFiles);
 
         Uri uri = Uri.fromFile(photoFiles);
         eventPhoto.setImageURI(uri);
-
-        sendEvent(photoo);
+        isPhotoMade = true;
 
     }
 
-    private void sendEvent(TypedFile typedFile) {
+    private void sendEvent() {
         Log.d(TAG, "sendEvent() called with: " + "");
 
-        Gson gson = new GsonBuilder().create();
-
         final String authToken = LoginManager.getTokenFromShared(getActivity());
+        List<String> members = new ArrayList<>();
 
-        RequestInterceptor requestInterceptor = new RequestInterceptor() {
-            @Override
-            public void intercept(RequestInterceptor.RequestFacade request) {
-//                request.addHeader("Content-Type", "multipart/form-data");
-                request.addHeader("AuthToken", authToken);
+        if (Config.personEntryList != null) {
+
+            for (PersonEntry personEntry : Config.personEntryList) {
+                members.add(personEntry.getUserToken());
             }
-        };
+        }
+        Log.d(TAG, "sendEvent(), members size: " + members.size());
 
-        List<String> ludzie = new ArrayList<>();
-        ludzie.add("patryk");
-        ludzie.add("noro");
+        for (String username : members) {
+            Log.d(TAG, "username: " + username);
+        }
 
-//        Event event = new Event("dupa", eventAddress, "super bibka", eventLatLng.latitude, eventLatLng.longitude, ludzie);
+        RestClient restClient = new RestClient();
 
-        RestAdapter restAdapter = new RestAdapter.Builder()
-                .setLogLevel(RestAdapter.LogLevel.FULL)
-                .setEndpoint(Config.RestAPI)
-                .setRequestInterceptor(requestInterceptor)
-                .setConverter(new GsonConverter(gson))
-                .build();
+        RestAPI restAPI = restClient.getRestAdapter().create(RestAPI.class);
 
-        RestAPI restAPI = restAdapter.create(RestAPI.class);
+        Event event = new Event(eventTitleEdit.getText().toString(), eventAddress,
+                eventDescriptionEdit.getText().toString(), eventLatLng.latitude, eventLatLng.longitude, members);
 
-        restAPI.addEvent(typedFile, "dupa", eventAddress, "super bibka", eventLatLng.latitude, eventLatLng.longitude, ludzie)
+        restAPI.addEvent(authToken, event)
                 .subscribe(new Subscriber<Response>() {
                     @Override
                     public void onCompleted() {
-                        Log.d(TAG, "onCompleted() called with: " + "");
+                        Log.d(TAG, "onCompleted()");
+
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                showSnackbar("Successfully added an event!");
+                            }
+                        });
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         Log.e(TAG, "onError() called with: " + "e = [" + e.getMessage() + "]");
+
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                showSnackbar("Server error, please try again!");
+                            }
+                        });
 
                         if (e instanceof RetrofitError) {
                             Log.e(TAG, "onError() called with: " + "e = [" + ((RetrofitError) e).getUrl() + "]");
@@ -249,6 +280,14 @@ public class EventFragment extends Fragment {
 
                     }
                 });
+    }
 
+
+    public void showSnackbar(String message) {
+
+        Snackbar snackbar = Snackbar
+                .make(eventCoordinatorLayout, message, Snackbar.LENGTH_LONG);
+
+        snackbar.show();
     }
 }

@@ -1,14 +1,22 @@
 package com.mieczkowskidev.friendspotter.Fragments;
 
+import android.app.Dialog;
 import android.app.FragmentManager;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.CheckBox;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -28,6 +36,7 @@ import com.mieczkowskidev.friendspotter.R;
 import com.trnql.smart.base.SmartFragment;
 import com.trnql.smart.people.PersonEntry;
 import com.trnql.smart.places.PlaceEntry;
+import com.trnql.zen.core.db.DbKVP;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -46,6 +55,13 @@ public class SpotterFragment extends SmartFragment {
     private FloatingActionButton refreshButton;
 
     private HashMap<Marker, PersonEntry> markerPersonEntryHashMap = new HashMap<>();
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        setHasOptionsMenu(true);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -77,9 +93,9 @@ public class SpotterFragment extends SmartFragment {
 
             Log.d(TAG, "smartPeopleChange() called with: " + "people = [" + people.size() + "]");
 
-            if (Config.personEntryList == null) {
-                Config.personEntryList = new ArrayList<>();
-            }
+//            if (Config.personEntryList == null) {
+//                Config.personEntryList = new ArrayList<>();
+//            }
 
             if (Config.personEntryList != null) {
                 Config.personEntryList.clear();
@@ -114,9 +130,10 @@ public class SpotterFragment extends SmartFragment {
         if (places != null && places.size() != 0) {
 
             Log.d(TAG, "smartPlacesChange() called with: " + "places = [" + places.size() + "]");
-            if (Config.placeEntryList == null) {
-                Config.placeEntryList = new ArrayList<>();
-            }
+//            if (Config.placeEntryList == null) {
+//                Config.placeEntryList = new ArrayList<>();
+//            }
+            Log.d(TAG, "smartPlacesChange() called with: " + "places = [" + places.toString() + "]");
 
             if (Config.placeEntryList != null) {
                 Config.placeEntryList.clear();
@@ -127,6 +144,25 @@ public class SpotterFragment extends SmartFragment {
             drawMarkers();
         }
 
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+
+        inflater.inflate(R.menu.menu_spotter, menu);
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.marker_filter:
+                filterDialog();
+                break;
+        }
+
+        return true;
     }
 
     private void initViews(View view) {
@@ -180,8 +216,10 @@ public class SpotterFragment extends SmartFragment {
                 @Override
                 public void onMapLoaded() {
 
-                    Log.d(TAG, "onClick() called with: " + "person: " + Config.personEntryList.size()
-                            + ", places: " + Config.placeEntryList.size());
+                    if (Config.personEntryList != null && Config.placeEntryList != null) {
+                        Log.d(TAG, "onClick() called with: " + "person: " + Config.personEntryList.size()
+                                + ", places: " + Config.placeEntryList.size());
+                    }
 
                     googleMap.setMyLocationEnabled(true);
 
@@ -201,13 +239,12 @@ public class SpotterFragment extends SmartFragment {
         if (googleMap != null) {
             googleMap.clear();
 
-            boolean peopleM = true;
-            boolean placeM = true;
+            SharedPreferences sharedPreferences = getActivity().getSharedPreferences("markers", Context.MODE_PRIVATE);
 
-            if (peopleM) {
+            if (sharedPreferences.getBoolean("people_markers", true)) {
                 drawPeopleMarkers();
             }
-            if (placeM) {
+            if (sharedPreferences.getBoolean("places_markers", true)) {
                 drawPlaceMarkers();
             }
         }
@@ -247,6 +284,18 @@ public class SpotterFragment extends SmartFragment {
 
             for (PlaceEntry placeEntry : Config.placeEntryList) {
 
+                googleMap.addMarker(
+                        new MarkerOptions()
+                                .position(new LatLng(placeEntry.getLatitude(), placeEntry.getLongitude()))
+                                .title(placeEntry.getName())
+                                .snippet(String.valueOf(placeEntry.getDistanceFromUser() + " m"))
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_places)));
+            }
+        } else if (getPlacesManager().getLatestPlaceList() != null && getPlacesManager().getLatestPlaceList().size() != 0) {
+            progressBarAction(false);
+            Log.d(TAG, "drawPlaceMarkers() for history " + getPlacesManager().getLatestPlaceList().size());
+
+            for (PlaceEntry placeEntry : getPlacesManager().getLatestPlaceList()) {
                 googleMap.addMarker(
                         new MarkerOptions()
                                 .position(new LatLng(placeEntry.getLatitude(), placeEntry.getLongitude()))
@@ -323,6 +372,40 @@ public class SpotterFragment extends SmartFragment {
     private void progressBarAction(boolean action) {
 
         mapProgressBar.setVisibility(action ? View.VISIBLE : View.GONE);
+
+    }
+
+    private void filterDialog() {
+        Log.d(TAG, "filterDialog()");
+
+        final Dialog dialog = new Dialog(getActivity());
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(false);
+
+        dialog.setContentView(R.layout.filter_dialog_layout);
+
+        final CheckBox peopleCheckBox = (CheckBox) dialog.findViewById(R.id.people_check_box);
+        final CheckBox placesCheckBox = (CheckBox) dialog.findViewById(R.id.places_check_box);
+        TextView okText = (TextView) dialog.findViewById(R.id.filter_dialog_ok);
+
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("markers", Context.MODE_PRIVATE);
+        peopleCheckBox.setChecked(sharedPreferences.getBoolean("people_markers", true));
+        placesCheckBox.setChecked(sharedPreferences.getBoolean("places_markers", true));
+
+        okText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                SharedPreferences sharedPreferences = getActivity().getSharedPreferences("markers", Context.MODE_PRIVATE);
+                sharedPreferences.edit().putBoolean("people_markers", peopleCheckBox.isChecked()).apply();
+                sharedPreferences.edit().putBoolean("places_markers", placesCheckBox.isChecked()).apply();
+
+                drawMarkers();
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
 
     }
 

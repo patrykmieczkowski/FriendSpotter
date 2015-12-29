@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- LocalEvents -->
+    <item name="evt_foo" type="id" />
+
+    <!-- ObservableProperties -->
+    <item name="op_foo" type="id" />
+
+    <!-- Database -->
+    <item name="db_kvp_foo" type="id" />
+
+</resources>

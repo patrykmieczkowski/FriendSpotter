@@ -20,6 +20,8 @@ public class WeatherManager {
                 return R.drawable.weather_clouds1;
             case "Sunny":
                 return R.drawable.weather_sun;
+            case "40% Chance Frozen Mix":
+                return R.drawable.weather_winter;
             default:
                 return R.drawable.weather_sun;
         }
