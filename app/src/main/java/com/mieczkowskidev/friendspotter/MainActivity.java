@@ -44,8 +44,6 @@ public class MainActivity extends SmartCompatActivity
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    public static List<PersonEntry> personEntryList = new ArrayList<>();
-    public static List<PlaceEntry> placeEntryList = new ArrayList<>();
     public static String addressString;
     public static LatLng currentPosition;
 

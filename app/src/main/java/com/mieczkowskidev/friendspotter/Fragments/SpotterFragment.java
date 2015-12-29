@@ -22,12 +22,14 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.mieczkowskidev.friendspotter.Config;
 import com.mieczkowskidev.friendspotter.MainActivity;
 import com.mieczkowskidev.friendspotter.R;
 import com.trnql.smart.base.SmartFragment;
 import com.trnql.smart.people.PersonEntry;
 import com.trnql.smart.places.PlaceEntry;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -75,11 +77,15 @@ public class SpotterFragment extends SmartFragment {
 
             Log.d(TAG, "smartPeopleChange() called with: " + "people = [" + people.size() + "]");
 
-            if (MainActivity.personEntryList != null) {
-                MainActivity.personEntryList.clear();
+            if (Config.personEntryList == null) {
+                Config.personEntryList = new ArrayList<>();
             }
 
-            MainActivity.personEntryList = people;
+            if (Config.personEntryList != null) {
+                Config.personEntryList.clear();
+            }
+
+            Config.personEntryList = people;
 
             drawMarkers();
 
@@ -108,12 +114,15 @@ public class SpotterFragment extends SmartFragment {
         if (places != null && places.size() != 0) {
 
             Log.d(TAG, "smartPlacesChange() called with: " + "places = [" + places.size() + "]");
-
-            if (MainActivity.placeEntryList != null) {
-                MainActivity.placeEntryList.clear();
+            if (Config.placeEntryList == null) {
+                Config.placeEntryList = new ArrayList<>();
             }
 
-            MainActivity.placeEntryList = places;
+            if (Config.placeEntryList != null) {
+                Config.placeEntryList.clear();
+            }
+
+            Config.placeEntryList = places;
 
             drawMarkers();
         }
@@ -128,15 +137,15 @@ public class SpotterFragment extends SmartFragment {
 
     private void setListeners() {
 
-        refreshButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                googleMap.clear();
-                zoomMapToLocation();
-                drawPeopleMarkers();
-                drawPlaceMarkers();
-            }
-        });
+//        refreshButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                googleMap.clear();
+//                zoomMapToLocation();
+//                drawPeopleMarkers();
+//                drawPlaceMarkers();
+//            }
+//        });
     }
 
     private void initMap() {
@@ -171,11 +180,13 @@ public class SpotterFragment extends SmartFragment {
                 @Override
                 public void onMapLoaded() {
 
+                    Log.d(TAG, "onClick() called with: " + "person: " + Config.personEntryList.size()
+                            + ", places: " + Config.placeEntryList.size());
+
                     googleMap.setMyLocationEnabled(true);
 
                     zoomMapToLocation();
-                    drawPeopleMarkers();
-                    drawPlaceMarkers();
+                    drawMarkers();
 
                     setListeners();
                     setInfoWindowAdapter();
@@ -205,13 +216,13 @@ public class SpotterFragment extends SmartFragment {
     private void drawPeopleMarkers() {
         Log.d(TAG, "drawPeopleMarkers()");
 
-        if (MainActivity.personEntryList != null) {
+        if (Config.personEntryList != null && Config.personEntryList.size() != 0) {
             progressBarAction(false);
-            Log.d(TAG, "drawPeopleMarkers() for " + MainActivity.personEntryList.size());
+            Log.d(TAG, "drawPeopleMarkers() for " + Config.personEntryList.size());
 
             markerPersonEntryHashMap.clear();
 
-            for (PersonEntry personEntry : MainActivity.personEntryList) {
+            for (PersonEntry personEntry : Config.personEntryList) {
 
                 Marker marker = googleMap.addMarker(
                         new MarkerOptions()
@@ -230,11 +241,11 @@ public class SpotterFragment extends SmartFragment {
     private void drawPlaceMarkers() {
         Log.d(TAG, "drawPlaceMarkers()");
 
-        if (MainActivity.placeEntryList != null) {
+        if (Config.placeEntryList != null && Config.placeEntryList.size() != 0) {
             progressBarAction(false);
-            Log.d(TAG, "drawPlaceMarkers() for " + MainActivity.placeEntryList.size());
+            Log.d(TAG, "drawPlaceMarkers() for " + Config.placeEntryList.size());
 
-            for (PlaceEntry placeEntry : MainActivity.placeEntryList) {
+            for (PlaceEntry placeEntry : Config.placeEntryList) {
 
                 googleMap.addMarker(
                         new MarkerOptions()
