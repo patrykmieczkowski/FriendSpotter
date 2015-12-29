@@ -26,6 +26,7 @@
         android:layout_margin="16dp"
         android:clickable="true"
         android:src="@drawable/refresh_button"
+        android:visibility="gone"
         app:backgroundTint="@color/colorAccent"
         app:layout_anchor="@id/spotter_coordinator_layout"
         app:layout_anchorGravity="bottom|right|end" />

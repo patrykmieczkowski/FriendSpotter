@@ -21,6 +21,7 @@ import com.mieczkowskidev.friendspotter.Fragments.SpotterFragment;
 import com.mieczkowskidev.friendspotter.Objects.User;
 import com.mieczkowskidev.friendspotter.Utils.FragmentSwitcher;
 import com.mieczkowskidev.friendspotter.Utils.GenericConverter;
+import com.mieczkowskidev.friendspotter.Utils.LoginManager;
 import com.mieczkowskidev.friendspotter.Utils.WeatherManager;
 import com.trnql.smart.base.SmartCompatActivity;
 import com.trnql.smart.location.AddressEntry;
@@ -32,6 +33,7 @@ import com.trnql.zen.core.AppData;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import retrofit.RestAdapter;
 import retrofit.client.Response;
@@ -65,10 +67,18 @@ public class MainActivity extends SmartCompatActivity
 
         Log.d(TAG, "onCreate starting trnql services");
         getAppData().setApiKey("3bd5eb7e-64c7-4ff7-ad3b-f8e4ceb21e18");
-        getPeopleManager().setUserToken("Patusz-100");
+
+        if (!LoginManager.getUserUsername(this).equals("")) {
+            getPeopleManager().setUserToken(LoginManager.getUserUsername(this));
+        } else {
+            Random random = new Random();
+            String username = "Anonymous " + String.valueOf(random.nextInt(100 - 1) + 1);
+            getPeopleManager().setUserToken(username);
+        }
         getPeopleManager().setProductName("FSpotter");
-//        getPeopleManager().setDataPayload("Magdusz");
+//        getPeopleManager().setDataPayload("");
         AppData.startAllServices(this);
+        getPeopleManager().setSearchRadius(20000);
         int searchRadius = getPeopleManager().getSearchRadius();
         Log.d(TAG, "SmartPeople Data for users within " + searchRadius + " meters\n");
 
@@ -152,7 +162,7 @@ public class MainActivity extends SmartCompatActivity
         super.smartLatLngChange(location);
         Log.d(TAG, "smartLatLngChange() called with: " + "location = [" + location.getLatLng().toString() + "]");
 
-        currentPosition  = new LatLng(location.getLatitude(), location.getLongitude());
+        currentPosition = new LatLng(location.getLatitude(), location.getLongitude());
     }
 
     @Override
@@ -167,56 +177,42 @@ public class MainActivity extends SmartCompatActivity
         drawerHeaderLayout.setBackgroundResource(WeatherManager.getDrawableForWeather(weatherConditions));
     }
 
-    @Override
-    protected void smartPeopleChange(List<PersonEntry> people) {
-        super.smartPeopleChange(people);
-
-        if (people != null) {
-
-            Log.d(TAG, "smartPeopleChange() called with: " + "people = [" + people.size() + "]");
-
-            if (personEntryList != null) {
-                personEntryList.clear();
-                personEntryList = people;
-            } else {
-                personEntryList = people;
-            }
-
-//            for (PersonEntry personEntry : people) {
-//                Log.d(TAG, "people: " + personEntry.getUserToken() + ", activity: "
-//                        + personEntry.getActivityString() + ", distance: " + personEntry.getDistanceFromUser()
-//                + "m, datapayload: " + personEntry.getDataPayload());
+//    @Override
+//    protected void smartPeopleChange(List<PersonEntry> people) {
+//        super.smartPeopleChange(people);
 //
-////            person.getUserToken();          // "2948574687"
-////            person.getLatitude();           // 36.068821
-////            person.getLongitude();          // -112.152823
-////            person.getActivityString();     // "Running, Driving, etc."
-////            person.getDistanceFromUser();   // 592 meters
-////            person.getTimeStamp();          // Date object
-////            person.getDataPayload();        // {"name":"Johnny", "status":"busy"} - Your own custom data!
+//        if (people != null) {
 //
+//            Log.d(TAG, "smartPeopleChange() called with: " + "people = [" + people.size() + "]");
+//
+//            if (personEntryList != null) {
+//                personEntryList.clear();
+//                personEntryList = people;
+//            } else {
+//                personEntryList = people;
 //            }
-        }
-    }
+//
+//        }
+//    }
 
-    @Override
-    protected void smartPlacesChange(List<PlaceEntry> places) {
-        super.smartPlacesChange(places);
-
-        if (places != null) {
-
-            Log.d(TAG, "smartPlacesChange() called with: " + "places = [" + places.size() + "]");
-
-            if (placeEntryList != null) {
-                placeEntryList.clear();
-                placeEntryList = places;
-            } else {
-                placeEntryList = places;
-            }
-
-        }
-
-    }
+//    @Override
+//    protected void smartPlacesChange(List<PlaceEntry> places) {
+//        super.smartPlacesChange(places);
+//
+//        if (places != null) {
+//
+//            Log.d(TAG, "smartPlacesChange() called with: " + "places = [" + places.size() + "]");
+//
+//            if (placeEntryList != null) {
+//                placeEntryList.clear();
+//                placeEntryList = places;
+//            } else {
+//                placeEntryList = places;
+//            }
+//
+//        }
+//
+//    }
 
     private void prepareNavigationDrawer() {
 
@@ -265,7 +261,7 @@ public class MainActivity extends SmartCompatActivity
         FragmentSwitcher.switchToFragment(this, new SpotterFragment(), R.id.main_activity_placeholder);
     }
 
-    public void startUserDetailsActivity(){
+    public void startUserDetailsActivity() {
 
         Intent intent = new Intent(this, UserDetailsActivity.class);
         startActivity(intent);

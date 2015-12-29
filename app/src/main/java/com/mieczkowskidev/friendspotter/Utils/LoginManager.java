@@ -32,14 +32,41 @@ public class LoginManager {
         return matcher.matches();
     }
 
-    public static String getTokenFromShared(Context context){
+    public static void saveDataToSharedPreferences(Context context, String username, String password, boolean userLogged) {
+
+        SharedPreferences sharedPreferences = context.getSharedPreferences(context.getString(R.string.shared_preferences_user), Context.MODE_PRIVATE);
+
+        sharedPreferences.edit().putString("usernameLogin", username).apply();
+        sharedPreferences.edit().putString("passwordLogin", password).apply();
+        sharedPreferences.edit().putBoolean("userLogged", userLogged).apply();
+    }
+
+    public static boolean getUserLoginStatus(Context context) {
+
+        return context.getSharedPreferences(context.getString(R.string.shared_preferences_user), Context.MODE_PRIVATE)
+                .getBoolean("userLogged", false);
+    }
+
+    public static String getUserLoginUsername(Context context) {
+
+        return context.getSharedPreferences(context.getString(R.string.shared_preferences_user), Context.MODE_PRIVATE)
+                .getString("usernameLogin", "");
+    }
+
+    public static String getUserLoginPass(Context context) {
+
+        return context.getSharedPreferences(context.getString(R.string.shared_preferences_user), Context.MODE_PRIVATE)
+                .getString("passwordLogin", "");
+    }
+
+    public static String getTokenFromShared(Context context) {
 
         return "Token " + context.getSharedPreferences
                 (context.getString(R.string.shared_preferences_user), Context.MODE_PRIVATE)
                 .getString(Config.TOKEN, "");
     }
 
-    public static String getUserImageUrl(Context context){
+    public static String getUserImageUrl(Context context) {
 
         return Config.RestAPI + "/" + context.getSharedPreferences
                 (context.getString(R.string.shared_preferences_user), Context.MODE_PRIVATE)
@@ -47,7 +74,7 @@ public class LoginManager {
     }
 
 
-    public static String getUserUsername(Context context){
+    public static String getUserUsername(Context context) {
 
         return context.getSharedPreferences
                 (context.getString(R.string.shared_preferences_user), Context.MODE_PRIVATE)

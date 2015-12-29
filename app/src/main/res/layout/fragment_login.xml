@@ -40,8 +40,7 @@
                     android:layout_centerHorizontal="true"
                     android:ellipsize="start"
                     android:hint="Email address"
-                    android:inputType="textEmailAddress"
-                    android:text="test@stanzas.co" />
+                    android:inputType="textEmailAddress" />
 
             </android.support.design.widget.TextInputLayout>
 
@@ -62,8 +61,7 @@
                     android:layout_centerHorizontal="true"
                     android:ellipsize="start"
                     android:hint="Password"
-                    android:inputType="textPassword"
-                    android:text="password123" />
+                    android:inputType="textPassword" />
 
             </android.support.design.widget.TextInputLayout>
 

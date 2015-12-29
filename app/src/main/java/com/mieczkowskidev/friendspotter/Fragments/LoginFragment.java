@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -37,6 +38,7 @@ public class LoginFragment extends Fragment {
     private TextInputLayout emailInputLayout, passwordInputLayout;
     private ProgressBar loginProgressBar;
     private LoginActivity loginActivity;
+    private ImageView logoImage;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -50,6 +52,11 @@ public class LoginFragment extends Fragment {
 
         getViews(view);
         setListeners();
+
+        if (LoginManager.getUserLoginStatus(getActivity())) {
+            emailEditText.setText(LoginManager.getUserLoginUsername(getActivity()));
+            passwordEditText.setText(LoginManager.getUserLoginPass(getActivity()));
+        }
 
         return view;
     }
@@ -67,6 +74,8 @@ public class LoginFragment extends Fragment {
 
         loginProgressBar = (ProgressBar) view.findViewById(R.id.login_progress_bar);
 
+        logoImage = (ImageView) view.findViewById(R.id.login_logo);
+
 //        Typeface myTypeface = Typeface.createFromAsset(getActivity().getAssets(), "fonts/timeless_bold.ttf");
 //        titleText.setTypeface(myTypeface);
 //        titleText.setShadowLayer(1, 0, 0, Color.BLACK);
@@ -78,7 +87,13 @@ public class LoginFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 loginFlow();
-//                loginActivity.startMainActivity();
+            }
+        });
+
+        logoImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loginActivity.startMainActivity();
             }
         });
 
@@ -89,25 +104,12 @@ public class LoginFragment extends Fragment {
             }
         });
 
-//        emailEditText.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                emailInputLayout.setErrorEnabled(false);
-//            }
-//        });
-//        passwordEditText.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                passwordInputLayout.setErrorEnabled(false);
-//            }
-//        });
-
         emailEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
                     if (LoginManager.isValidEmail(emailEditText.getText().toString())) {
-                        Log.e(TAG, "gites, valid email");
+                        Log.d(TAG, "gites, valid email");
                         emailInputLayout.setErrorEnabled(false);
                     } else {
                         emailInputLayout.setError("This is not a proper email address");
@@ -123,7 +125,7 @@ public class LoginFragment extends Fragment {
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
                     if (LoginManager.isPasswordValid(passwordEditText.getText().toString())) {
-                        Log.e(TAG, "gites, valid password");
+                        Log.d(TAG, "gites, valid password");
                         passwordInputLayout.setErrorEnabled(false);
                     } else {
                         passwordInputLayout.setError("Password to short");
@@ -133,28 +135,6 @@ public class LoginFragment extends Fragment {
                 }
             }
         });
-
-//        emailEditText.addTextChangedListener(new TextWatcher() {
-//            @Override
-//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//
-//            }
-//
-//            @Override
-//            public void onTextChanged(CharSequence s, int start, int before, int count) {
-//
-//            }
-//
-//            @Override
-//            public void afterTextChanged(Editable s) {
-//                if (LoginManager.isValidEmail(s.toString())){
-//                    Log.e(TAG, "gites, valid email");
-//                    emailInputLayout.setErrorEnabled(false);
-//                } else {
-//                    emailInputLayout.setError("zly mail kolego");
-//                }
-//            }
-//        });
 
     }
 
@@ -167,14 +147,6 @@ public class LoginFragment extends Fragment {
         getDataFromFormula();
     }
 
-    //    private void getDataFromFormula() {
-//        Log.d(TAG, "getDataFromFormula()");
-//
-//
-//        loginUser();
-//
-//
-//    }
     private void getDataFromFormula() {
         Log.d(TAG, "getDataFromFormula()");
 
@@ -262,7 +234,7 @@ public class LoginFragment extends Fragment {
         }
     }
 
-    private void loginUserOnServer(UserLogin userLogin) {
+    private void loginUserOnServer(final UserLogin userLogin) {
         Log.d(TAG, "loginUserOnServer() with " + userLogin.toString());
 
         startLoginLoading();
@@ -274,12 +246,17 @@ public class LoginFragment extends Fragment {
         restAPI.loginUser(userLogin)
                 .doOnError(new Action1<Throwable>() {
                     @Override
-                    public void call(Throwable throwable) {
+                    public void call(final Throwable throwable) {
                         Log.e(TAG, "error :( " + throwable.getMessage());
 
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                if (throwable.getMessage().contains("401")) {
+                                    ((LoginActivity) getActivity()).showSnackbar("Wrong authentication data!");
+                                } else {
+                                    ((LoginActivity) getActivity()).showSnackbar("Server error, please check connection and try again!");
+                                }
                                 stopLoginLoading();
                             }
                         });
@@ -294,6 +271,8 @@ public class LoginFragment extends Fragment {
                         sharedPreferences.edit().putString(Config.TOKEN, user.getAuthToken()).apply();
                         sharedPreferences.edit().putString(Config.IMAGE, user.getImage()).apply();
                         sharedPreferences.edit().putString(Config.USERNAME, user.getUsername()).apply();
+
+                        LoginManager.saveDataToSharedPreferences(getActivity(), userLogin.getUsername(), userLogin.getPassword(), true);
 
                         getActivity().runOnUiThread(new Runnable() {
                             @Override

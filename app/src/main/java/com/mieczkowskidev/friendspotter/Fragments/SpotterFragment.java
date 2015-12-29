@@ -29,6 +29,7 @@ import com.trnql.smart.people.PersonEntry;
 import com.trnql.smart.places.PlaceEntry;
 
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by Patryk Mieczkowski on 26.12.15
@@ -64,6 +65,59 @@ public class SpotterFragment extends SmartFragment {
 
         initMap();
         setMapReadyCallback();
+    }
+
+    @Override
+    protected void smartPeopleChange(List<PersonEntry> people) {
+        super.smartPeopleChange(people);
+
+        if (people != null && people.size() != 0) {
+
+            Log.d(TAG, "smartPeopleChange() called with: " + "people = [" + people.size() + "]");
+
+            if (MainActivity.personEntryList != null) {
+                MainActivity.personEntryList.clear();
+            }
+
+            MainActivity.personEntryList = people;
+
+            drawMarkers();
+
+
+//            for (PersonEntry personEntry : people) {
+//                Log.d(TAG, "people: " + personEntry.getUserToken() + ", activity: "
+//                        + personEntry.getActivityString() + ", distance: " + personEntry.getDistanceFromUser()
+//                + "m, datapayload: " + personEntry.getDataPayload());
+//
+////            person.getUserToken();          // "2948574687"
+////            person.getLatitude();           // 36.068821
+////            person.getLongitude();          // -112.152823
+////            person.getActivityString();     // "Running, Driving, etc."
+////            person.getDistanceFromUser();   // 592 meters
+////            person.getTimeStamp();          // Date object
+////            person.getDataPayload();        // {"name":"Johnny", "status":"busy"} - Your own custom data!
+//
+//            }
+        }
+    }
+
+    @Override
+    protected void smartPlacesChange(List<PlaceEntry> places) {
+        super.smartPlacesChange(places);
+
+        if (places != null && places.size() != 0) {
+
+            Log.d(TAG, "smartPlacesChange() called with: " + "places = [" + places.size() + "]");
+
+            if (MainActivity.placeEntryList != null) {
+                MainActivity.placeEntryList.clear();
+            }
+
+            MainActivity.placeEntryList = places;
+
+            drawMarkers();
+        }
+
     }
 
     private void initViews(View view) {
@@ -128,6 +182,23 @@ public class SpotterFragment extends SmartFragment {
 
                 }
             });
+        }
+    }
+
+    private void drawMarkers() {
+
+        if (googleMap != null) {
+            googleMap.clear();
+
+            boolean peopleM = true;
+            boolean placeM = true;
+
+            if (peopleM) {
+                drawPeopleMarkers();
+            }
+            if (placeM) {
+                drawPlaceMarkers();
+            }
         }
     }
 
@@ -210,6 +281,11 @@ public class SpotterFragment extends SmartFragment {
                     View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_marker_people, null);
 
                     TextView usernameText = (TextView) view.findViewById(R.id.marker_people_username);
+                    TextView activityText = (TextView) view.findViewById(R.id.marker_people_activity);
+
+                    if (activityText != null) {
+                        activityText.setText(personEntry.getActivityString());
+                    }
 
                     usernameText.setText(personEntry.getUserToken());
                     return view;

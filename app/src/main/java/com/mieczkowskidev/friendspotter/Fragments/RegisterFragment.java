@@ -220,18 +220,24 @@ public class RegisterFragment extends Fragment {
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                ((LoginActivity) getActivity()).showSnackbar("Successfully created account!");
                                 ((LoginActivity) getActivity()).startLoginFragment();
                             }
                         });
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(final Throwable e) {
                         Log.e(TAG, "error :( " + e.getMessage());
 
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                if (e.getMessage().contains("401")) {
+                                    ((LoginActivity) getActivity()).showSnackbar("User already exists");
+                                } else {
+                                    ((LoginActivity) getActivity()).showSnackbar("Server error, please check connection and try again!");
+                                }
                                 stopRegisterLoading();
                             }
                         });

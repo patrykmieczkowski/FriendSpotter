@@ -13,20 +13,36 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.model.LatLng;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.mieczkowskidev.friendspotter.API.RestAPI;
+import com.mieczkowskidev.friendspotter.Config;
 import com.mieczkowskidev.friendspotter.MainActivity;
+import com.mieczkowskidev.friendspotter.Objects.Event;
 import com.mieczkowskidev.friendspotter.R;
+import com.mieczkowskidev.friendspotter.Utils.LoginManager;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
+import retrofit.RequestInterceptor;
+import retrofit.RestAdapter;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
+import retrofit.converter.GsonConverter;
 import retrofit.mime.TypedFile;
+import rx.Subscriber;
 
 /**
  * Created by Patryk Mieczkowski on 2015-12-27
@@ -37,7 +53,9 @@ public class EventFragment extends Fragment {
     private static final int REQUEST_TAKE_PHOTO = 1337;
     private TextView addressText;
     private ImageView eventPhoto;
-    private String imagePath;
+    private EditText eventTitleEdit, eventDescriptionEdit;
+    private String imagePath, eventAddress;
+    private LatLng eventLatLng;
 
 
     public static EventFragment newInstance() {
@@ -65,6 +83,8 @@ public class EventFragment extends Fragment {
 
         addressText = (TextView) view.findViewById(R.id.event_address_text);
         eventPhoto = (ImageView) view.findViewById(R.id.event_photo);
+        eventTitleEdit = (EditText) view.findViewById(R.id.event_title);
+        eventDescriptionEdit = (EditText) view.findViewById(R.id.event_description);
 
     }
 
@@ -80,7 +100,15 @@ public class EventFragment extends Fragment {
 
     private void prepareViews() {
 
-        addressText.setText(MainActivity.addressString);
+        eventAddress = MainActivity.addressString;
+        eventLatLng = MainActivity.currentPosition;
+
+        addressText.setText(eventAddress);
+
+        String titleHint = LoginManager.getUserUsername(getActivity()) + " Event";
+        String descriptionHint = "Join and have fun!";
+        eventTitleEdit.setHint(titleHint);
+        eventDescriptionEdit.setHint(descriptionHint);
     }
 
     @Override
@@ -161,6 +189,66 @@ public class EventFragment extends Fragment {
 
         Uri uri = Uri.fromFile(photoFiles);
         eventPhoto.setImageURI(uri);
+
+        sendEvent(photoo);
+
+    }
+
+    private void sendEvent(TypedFile typedFile) {
+        Log.d(TAG, "sendEvent() called with: " + "");
+
+        Gson gson = new GsonBuilder().create();
+
+        final String authToken = LoginManager.getTokenFromShared(getActivity());
+
+        RequestInterceptor requestInterceptor = new RequestInterceptor() {
+            @Override
+            public void intercept(RequestInterceptor.RequestFacade request) {
+//                request.addHeader("Content-Type", "multipart/form-data");
+                request.addHeader("AuthToken", authToken);
+            }
+        };
+
+        List<String> ludzie = new ArrayList<>();
+        ludzie.add("patryk");
+        ludzie.add("noro");
+
+//        Event event = new Event("dupa", eventAddress, "super bibka", eventLatLng.latitude, eventLatLng.longitude, ludzie);
+
+        RestAdapter restAdapter = new RestAdapter.Builder()
+                .setLogLevel(RestAdapter.LogLevel.FULL)
+                .setEndpoint(Config.RestAPI)
+                .setRequestInterceptor(requestInterceptor)
+                .setConverter(new GsonConverter(gson))
+                .build();
+
+        RestAPI restAPI = restAdapter.create(RestAPI.class);
+
+        restAPI.addEvent(typedFile, "dupa", eventAddress, "super bibka", eventLatLng.latitude, eventLatLng.longitude, ludzie)
+                .subscribe(new Subscriber<Response>() {
+                    @Override
+                    public void onCompleted() {
+                        Log.d(TAG, "onCompleted() called with: " + "");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e(TAG, "onError() called with: " + "e = [" + e.getMessage() + "]");
+
+                        if (e instanceof RetrofitError) {
+                            Log.e(TAG, "onError() called with: " + "e = [" + ((RetrofitError) e).getUrl() + "]");
+                            Log.e(TAG, "onError() called with: " + "e = [" + ((RetrofitError) e).getBody().toString() + "]");
+
+                        }
+
+                    }
+
+                    @Override
+                    public void onNext(Response response) {
+                        Log.d(TAG, "onNext() called with: " + "response = [" + response.getBody().toString() + "]");
+
+                    }
+                });
 
     }
 }
