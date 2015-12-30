@@ -36,6 +36,7 @@ import com.mieczkowskidev.friendspotter.Objects.User;
 import com.mieczkowskidev.friendspotter.R;
 import com.mieczkowskidev.friendspotter.Utils.GenericConverter;
 import com.mieczkowskidev.friendspotter.Utils.LoginManager;
+import com.mieczkowskidev.friendspotter.Utils.PlaceInterface;
 import com.trnql.smart.base.SmartFragment;
 import com.trnql.smart.people.PersonEntry;
 import com.trnql.smart.places.PlaceEntry;
@@ -53,7 +54,7 @@ import rx.Subscriber;
 /**
  * Created by Patryk Mieczkowski on 26.12.15
  */
-public class SpotterFragment extends SmartFragment {
+public class SpotterFragment extends SmartFragment implements PlaceInterface {
 
     public static final String TAG = SpotterFragment.class.getSimpleName();
 
@@ -137,28 +138,28 @@ public class SpotterFragment extends SmartFragment {
         }
     }
 
-    @Override
-    protected void smartPlacesChange(List<PlaceEntry> places) {
-        super.smartPlacesChange(places);
-
-        if (places != null && places.size() != 0) {
-
-            Log.d(TAG, "smartPlacesChange() called with: " + "places = [" + places.size() + "]");
-//            if (Config.placeEntryList == null) {
-//                Config.placeEntryList = new ArrayList<>();
+//    @Override
+//    protected void smartPlacesChange(List<PlaceEntry> places) {
+//        super.smartPlacesChange(places);
+//
+//        if (places != null && places.size() != 0) {
+//
+//            Log.d(TAG, "smartPlacesChange() called with: " + "places = [" + places.size() + "]");
+////            if (Config.placeEntryList == null) {
+////                Config.placeEntryList = new ArrayList<>();
+////            }
+////            Log.d(TAG, "smartPlacesChange() called with: " + "places = [" + places.toString() + "]");
+//
+//            if (Config.placeEntryList != null) {
+//                Config.placeEntryList.clear();
 //            }
-//            Log.d(TAG, "smartPlacesChange() called with: " + "places = [" + places.toString() + "]");
-
-            if (Config.placeEntryList != null) {
-                Config.placeEntryList.clear();
-            }
-
-            Config.placeEntryList = places;
-
-            drawMarkers();
-        }
-
-    }
+//
+//            Config.placeEntryList = places;
+//
+//            drawMarkers();
+//        }
+//
+//    }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -484,4 +485,21 @@ public class SpotterFragment extends SmartFragment {
                 });
     }
 
+    @Override
+    public void onPlaceUpdate(List<PlaceEntry> placeEntryList) {
+
+        if (placeEntryList != null && placeEntryList.size() != 0) {
+
+            Log.d(TAG, "smartPlacesChange() called with: " + "places = [" + placeEntryList.size() + "]");
+
+            if (Config.placeEntryList != null) {
+                Config.placeEntryList.clear();
+            }
+
+            Config.placeEntryList = placeEntryList;
+
+            drawMarkers();
+        }
+
+    }
 }

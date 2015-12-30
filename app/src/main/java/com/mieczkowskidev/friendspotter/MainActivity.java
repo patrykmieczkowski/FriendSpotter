@@ -26,6 +26,7 @@ import com.mieczkowskidev.friendspotter.Objects.User;
 import com.mieczkowskidev.friendspotter.Utils.FragmentSwitcher;
 import com.mieczkowskidev.friendspotter.Utils.GenericConverter;
 import com.mieczkowskidev.friendspotter.Utils.LoginManager;
+import com.mieczkowskidev.friendspotter.Utils.PlaceInterface;
 import com.mieczkowskidev.friendspotter.Utils.WeatherManager;
 import com.trnql.smart.base.SmartCompatActivity;
 import com.trnql.smart.location.AddressEntry;
@@ -50,6 +51,8 @@ public class MainActivity extends SmartCompatActivity
 
     public static String addressString;
     public static LatLng currentPosition;
+
+    public PlaceInterface placeInterface;
 
     private Toolbar toolbar;
     private DrawerLayout drawer;
@@ -125,7 +128,9 @@ public class MainActivity extends SmartCompatActivity
         switch (id) {
             case R.id.nav_spotter:
                 Log.d(TAG, "onNavigationItemSelected: Spotter");
-                FragmentSwitcher.switchToFragment(this, SpotterFragment.newInstance(), R.id.main_activity_placeholder);
+                SpotterFragment spotterFragment = SpotterFragment.newInstance();
+                placeInterface = spotterFragment;
+                FragmentSwitcher.switchToFragment(this, spotterFragment, R.id.main_activity_placeholder);
                 break;
             case R.id.nav_events:
                 Log.d(TAG, "onNavigationItemSelected: Events");
@@ -202,24 +207,17 @@ public class MainActivity extends SmartCompatActivity
 //        }
 //    }
 
-//    @Override
-//    protected void smartPlacesChange(List<PlaceEntry> places) {
-//        super.smartPlacesChange(places);
-//
-//        if (places != null) {
-//
-//            Log.d(TAG, "smartPlacesChange() called with: " + "places = [" + places.size() + "]");
-//
-//            if (placeEntryList != null) {
-//                placeEntryList.clear();
-//                placeEntryList = places;
-//            } else {
-//                placeEntryList = places;
-//            }
-//
-//        }
-//
-//    }
+    @Override
+    protected void smartPlacesChange(List<PlaceEntry> places) {
+        super.smartPlacesChange(places);
+
+        if (places != null) {
+
+            placeInterface.onPlaceUpdate(places);
+
+        }
+
+    }
 
     private void prepareNavigationDrawer() {
 
@@ -236,8 +234,9 @@ public class MainActivity extends SmartCompatActivity
     private void showStartingFragment() {
         Log.d(TAG, "showStartingFragment()");
 
-        FragmentSwitcher.switchToFragment(this, new SpotterFragment(), R.id.main_activity_placeholder);
-    }
+        SpotterFragment spotterFragment = SpotterFragment.newInstance();
+        placeInterface = spotterFragment;
+        FragmentSwitcher.switchToFragment(this, spotterFragment, R.id.main_activity_placeholder);    }
 
     public void startUserDetailsActivity() {
 

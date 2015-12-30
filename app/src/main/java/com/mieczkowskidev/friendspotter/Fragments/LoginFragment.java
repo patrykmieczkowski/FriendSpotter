@@ -90,12 +90,12 @@ public class LoginFragment extends Fragment {
             }
         });
 
-        logoImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                loginActivity.startMainActivity();
-            }
-        });
+//        logoImage.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                loginActivity.startMainActivity();
+//            }
+//        });
 
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override

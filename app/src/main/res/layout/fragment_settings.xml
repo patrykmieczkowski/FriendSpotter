@@ -1,35 +1,54 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment_settings_coordinator"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/event_background2">
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="10dp"
-        android:layout_marginTop="50dp"
-        android:text="Friends nearby range"
-        android:textSize="18sp" />
-
-    <SeekBar
-        android:id="@+id/settings_seek_bar"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:layout_below="@+id/textView"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="20dp"
-        android:max="49800" />
+        android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/seetings_seek_value"
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="50dp"
+            android:text="Friends nearby range"
+            android:textSize="18sp" />
+
+        <SeekBar
+            android:id="@+id/settings_seek_bar"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_below="@+id/textView"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="20dp"
+            android:max="49800" />
+
+        <TextView
+            android:id="@+id/seetings_seek_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/settings_seek_bar"
+            android:layout_centerHorizontal="true"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            tools:text="50" />
+
+    </RelativeLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/logout_floating_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/settings_seek_bar"
-        android:layout_centerHorizontal="true"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        tools:text="50" />
+        android:layout_margin="16dp"
+        android:clickable="true"
+        android:src="@drawable/logout_icon"
+        app:backgroundTint="@color/colorAccent"
+        app:layout_anchor="@id/fragment_settings_coordinator"
+        app:layout_anchorGravity="bottom|right|end" />
 
-</RelativeLayout>
+</android.support.design.widget.CoordinatorLayout>

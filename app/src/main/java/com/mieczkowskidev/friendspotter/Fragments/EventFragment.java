@@ -59,7 +59,7 @@ public class EventFragment extends Fragment {
     private static final String TAG = EventFragment.class.getSimpleName();
     private static final int REQUEST_TAKE_PHOTO = 1337;
     private TextView addressText, inviteText;
-    private ImageView eventPhoto;
+//    private ImageView eventPhoto;
     private EditText eventTitleEdit, eventDescriptionEdit;
     private String imagePath, eventAddress;
     private LatLng eventLatLng;
@@ -92,7 +92,7 @@ public class EventFragment extends Fragment {
     private void initViews(View view) {
 
         addressText = (TextView) view.findViewById(R.id.event_address_text);
-        eventPhoto = (ImageView) view.findViewById(R.id.event_photo);
+//        eventPhoto = (ImageView) view.findViewById(R.id.event_photo);
         eventTitleEdit = (EditText) view.findViewById(R.id.event_title);
         eventDescriptionEdit = (EditText) view.findViewById(R.id.event_description);
         addButton = (FloatingActionButton) view.findViewById(R.id.event_add_floating_button);
@@ -103,14 +103,14 @@ public class EventFragment extends Fragment {
 
     private void setListeners() {
 
-        eventPhoto.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                if (!isPhotoMade) {
-//                    takePictureFromCamera();
-//                }
-            }
-        });
+//        eventPhoto.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+////                if (!isPhotoMade) {
+////                    takePictureFromCamera();
+////                }
+//            }
+//        });
 
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -223,7 +223,7 @@ public class EventFragment extends Fragment {
         typedFileImageSend = new TypedFile("file:", photoFiles);
 
         Uri uri = Uri.fromFile(photoFiles);
-        eventPhoto.setImageURI(uri);
+//        eventPhoto.setImageURI(uri);
         isPhotoMade = true;
 
     }

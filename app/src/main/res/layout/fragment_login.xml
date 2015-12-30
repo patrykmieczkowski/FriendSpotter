@@ -39,8 +39,8 @@
                     android:layout_height="match_parent"
                     android:layout_centerHorizontal="true"
                     android:ellipsize="start"
-                    android:hint="Username"
-                    android:inputType="text" />
+                    android:hint="E-mail"
+                    android:inputType="textEmailAddress" />
 
             </android.support.design.widget.TextInputLayout>
 

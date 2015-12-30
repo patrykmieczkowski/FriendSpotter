@@ -45,9 +45,9 @@ public class LoginActivity extends AppCompatActivity {
 
         LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-//        if (!isOnline()) {
-//            showAlertNoInternet();
-//        }
+        if (!isOnline()) {
+            showAlertNoInternet();
+        }
 
         if (isOnline() && !manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             showAlertNoGPS();
