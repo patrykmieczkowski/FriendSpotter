@@ -2,6 +2,7 @@ package com.mieczkowskidev.friendspotter.API;
 
 import com.google.gson.JsonElement;
 import com.mieczkowskidev.friendspotter.Objects.Event;
+import com.mieczkowskidev.friendspotter.Objects.MyProfile;
 import com.mieczkowskidev.friendspotter.Objects.User;
 import com.mieczkowskidev.friendspotter.Objects.UserLogin;
 
@@ -41,4 +42,7 @@ public interface RestAPI {
                                       @Query("lon") Double lon,
                                       @Query("radius") int radius,
                                       @Query("timeOffset") int timeOffset);
+
+    @GET("/get-my-profile")
+    Observable<MyProfile> getMyProfile(@Header("AuthToken") String token);
 }

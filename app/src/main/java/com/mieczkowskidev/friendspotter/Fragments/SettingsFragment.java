@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,6 +18,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.mieczkowskidev.friendspotter.Adapters.EventHistoryAdapter;
+import com.mieczkowskidev.friendspotter.MainActivity;
 import com.mieczkowskidev.friendspotter.R;
 import com.mieczkowskidev.friendspotter.Utils.LoginManager;
 import com.squareup.picasso.Picasso;
@@ -35,6 +37,7 @@ public class SettingsFragment extends SmartFragment {
     private TextView seekBarValueText;
     private String globalProgress;
     private int searchRadius;
+    private FloatingActionButton logoutButton;
 
     public static SettingsFragment newInstance() {
         SettingsFragment myFragment = new SettingsFragment();
@@ -61,9 +64,17 @@ public class SettingsFragment extends SmartFragment {
 
         seekBar = (SeekBar) view.findViewById(R.id.settings_seek_bar);
         seekBarValueText = (TextView) view.findViewById(R.id.seetings_seek_value);
+        logoutButton = (FloatingActionButton) view.findViewById(R.id.logout_floating_button);
     }
 
     private void setListeners() {
+
+        logoutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                logout();
+            }
+        });
 
     }
 
@@ -108,5 +119,12 @@ public class SettingsFragment extends SmartFragment {
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("people_api", Context.MODE_PRIVATE);
         sharedPreferences.edit().putInt("seek_radius", searchRadius).apply();
 
+    }
+
+    private void logout() {
+
+        getActivity().getSharedPreferences("login", Context.MODE_PRIVATE).edit().putBoolean("is_user_logged", false).apply();
+
+        ((MainActivity) getActivity()).startLoginActivity();
     }
 }

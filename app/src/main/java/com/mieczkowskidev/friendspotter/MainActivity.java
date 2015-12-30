@@ -52,7 +52,7 @@ public class MainActivity extends SmartCompatActivity
     public static String addressString;
     public static LatLng currentPosition;
 
-    public PlaceInterface placeInterface;
+//    public PlaceInterface placeInterface;
 
     private Toolbar toolbar;
     private DrawerLayout drawer;
@@ -129,7 +129,7 @@ public class MainActivity extends SmartCompatActivity
             case R.id.nav_spotter:
                 Log.d(TAG, "onNavigationItemSelected: Spotter");
                 SpotterFragment spotterFragment = SpotterFragment.newInstance();
-                placeInterface = spotterFragment;
+//                placeInterface = spotterFragment;
                 FragmentSwitcher.switchToFragment(this, spotterFragment, R.id.main_activity_placeholder);
                 break;
             case R.id.nav_events:
@@ -189,6 +189,12 @@ public class MainActivity extends SmartCompatActivity
         drawerHeaderLayout.setBackgroundResource(WeatherManager.getDrawableForWeather(weatherConditions));
     }
 
+    public void startLoginActivity() {
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
 //    @Override
 //    protected void smartPeopleChange(List<PersonEntry> people) {
 //        super.smartPeopleChange(people);
@@ -207,17 +213,18 @@ public class MainActivity extends SmartCompatActivity
 //        }
 //    }
 
-    @Override
-    protected void smartPlacesChange(List<PlaceEntry> places) {
-        super.smartPlacesChange(places);
-
-        if (places != null) {
-
-            placeInterface.onPlaceUpdate(places);
-
-        }
-
-    }
+//    @Override
+//    protected void smartPlacesChange(List<PlaceEntry> places) {
+//        super.smartPlacesChange(places);
+//        Log.d(TAG, "smartPlacesChange() called with: " + "places = [" + places + "]");
+//
+//        if (places != null) {
+//
+//            placeInterface.onPlaceUpdate(places);
+//
+//        }
+//
+//    }
 
     private void prepareNavigationDrawer() {
 
@@ -235,8 +242,9 @@ public class MainActivity extends SmartCompatActivity
         Log.d(TAG, "showStartingFragment()");
 
         SpotterFragment spotterFragment = SpotterFragment.newInstance();
-        placeInterface = spotterFragment;
-        FragmentSwitcher.switchToFragment(this, spotterFragment, R.id.main_activity_placeholder);    }
+//        placeInterface = spotterFragment;
+        FragmentSwitcher.switchToFragment(this, spotterFragment, R.id.main_activity_placeholder);
+    }
 
     public void startUserDetailsActivity() {
 

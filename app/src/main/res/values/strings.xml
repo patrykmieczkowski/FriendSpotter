@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Friend Spotter</string>
+    <string name="app_name">FSpotter</string>
     <string name="google_api_key">AIzaSyBpe0Q2Y0w2hkvDdj2_i5H3YieE3rW62CI</string>
 
     <string name="shared_preferences_user">shared_pref_user</string>

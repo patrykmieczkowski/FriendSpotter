@@ -13,6 +13,9 @@ public class Event {
     private String description;
     private Double lat;
     private Double lon;
+    private String image;
+    private String thumbnail;
+    private String created;
     private List<String> members = new ArrayList<>();
 
     public Event(String title, String location, String description, Double lat, Double lon, List<String> members) {
@@ -70,6 +73,30 @@ public class Event {
 
     public void setMembers(List<String> members) {
         this.members = members;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public String getThumbnail() {
+        return thumbnail;
+    }
+
+    public void setThumbnail(String thumbnail) {
+        this.thumbnail = thumbnail;
+    }
+
+    public String getCreated() {
+        return created;
+    }
+
+    public void setCreated(String created) {
+        this.created = created;
     }
 
     @Override

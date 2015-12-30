@@ -277,6 +277,8 @@ public class LoginFragment extends Fragment {
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                SharedPreferences sharedPreferences = getActivity().getSharedPreferences("login", Context.MODE_PRIVATE);
+                                sharedPreferences.edit().putBoolean("is_user_logged", true).apply();
                                 loginActivity.startMainActivity();
                             }
                         });

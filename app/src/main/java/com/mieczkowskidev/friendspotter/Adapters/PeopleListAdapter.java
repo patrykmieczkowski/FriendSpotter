@@ -42,6 +42,9 @@ public class PeopleListAdapter extends RecyclerView.Adapter<PeopleListAdapter.Ev
 
         holder.description.setText(personEntryList.get(position).getActivityString());
 
+        String distanceString = personEntryList.get(position).getDistanceFromUser() + " m";
+        holder.distance.setText(distanceString);
+
     }
 
     @Override
@@ -53,14 +56,14 @@ public class PeopleListAdapter extends RecyclerView.Adapter<PeopleListAdapter.Ev
 
         TextView username;
         TextView description;
-        ImageView image;
+        TextView distance;
 
         public EventHolder(View itemView) {
             super(itemView);
 
             username = (TextView) itemView.findViewById(R.id.people_item_username);
             description = (TextView) itemView.findViewById(R.id.people_item_description);
-            image = (ImageView) itemView.findViewById(R.id.people_item_image);
+            distance = (TextView) itemView.findViewById(R.id.people_item_distance);
         }
     }
 

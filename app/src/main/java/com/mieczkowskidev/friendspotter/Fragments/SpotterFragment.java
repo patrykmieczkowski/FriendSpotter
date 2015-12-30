@@ -54,7 +54,7 @@ import rx.Subscriber;
 /**
  * Created by Patryk Mieczkowski on 26.12.15
  */
-public class SpotterFragment extends SmartFragment implements PlaceInterface {
+public class SpotterFragment extends SmartFragment {
 
     public static final String TAG = SpotterFragment.class.getSimpleName();
 
@@ -138,28 +138,28 @@ public class SpotterFragment extends SmartFragment implements PlaceInterface {
         }
     }
 
-//    @Override
-//    protected void smartPlacesChange(List<PlaceEntry> places) {
-//        super.smartPlacesChange(places);
-//
-//        if (places != null && places.size() != 0) {
-//
-//            Log.d(TAG, "smartPlacesChange() called with: " + "places = [" + places.size() + "]");
-////            if (Config.placeEntryList == null) {
-////                Config.placeEntryList = new ArrayList<>();
-////            }
-////            Log.d(TAG, "smartPlacesChange() called with: " + "places = [" + places.toString() + "]");
-//
-//            if (Config.placeEntryList != null) {
-//                Config.placeEntryList.clear();
+    @Override
+    protected void smartPlacesChange(List<PlaceEntry> places) {
+        super.smartPlacesChange(places);
+
+        if (places != null && places.size() != 0) {
+
+            Log.d(TAG, "smartPlacesChange() called with: " + "places = [" + places.size() + "]");
+//            if (Config.placeEntryList == null) {
+//                Config.placeEntryList = new ArrayList<>();
 //            }
-//
-//            Config.placeEntryList = places;
-//
-//            drawMarkers();
-//        }
-//
-//    }
+//            Log.d(TAG, "smartPlacesChange() called with: " + "places = [" + places.toString() + "]");
+
+            if (Config.placeEntryList != null) {
+                Config.placeEntryList.clear();
+            }
+
+            Config.placeEntryList = places;
+
+            drawMarkers();
+        }
+
+    }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -281,14 +281,16 @@ public class SpotterFragment extends SmartFragment implements PlaceInterface {
 
             for (PersonEntry personEntry : Config.personEntryList) {
 
-                Marker marker = googleMap.addMarker(
-                        new MarkerOptions()
-                                .position(new LatLng(personEntry.getLatitude(), personEntry.getLongitude()))
-                                .title(personEntry.getUserToken())
-                                .snippet(String.valueOf(personEntry.getDistanceFromUser()) + " m")
-                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_friend2)));
+                if (!personEntry.getUserToken().contains("Anonymous")) {
+                    Marker marker = googleMap.addMarker(
+                            new MarkerOptions()
+                                    .position(new LatLng(personEntry.getLatitude(), personEntry.getLongitude()))
+                                    .title(personEntry.getUserToken())
+                                    .snippet(String.valueOf(personEntry.getDistanceFromUser()) + " m")
+                                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_friend2)));
 
-                markerPersonEntryHashMap.put(marker, personEntry);
+                    markerPersonEntryHashMap.put(marker, personEntry);
+                }
 
 
             }
@@ -378,10 +380,11 @@ public class SpotterFragment extends SmartFragment implements PlaceInterface {
 
                     TextView usernameText = (TextView) view.findViewById(R.id.marker_people_username);
                     TextView activityText = (TextView) view.findViewById(R.id.marker_people_activity);
+                    TextView distanceText = (TextView) view.findViewById(R.id.marker_people_distance);
 
-                    if (activityText != null) {
-                        activityText.setText(personEntry.getActivityString());
-                    }
+                    activityText.setText(personEntry.getActivityString());
+                    String distanceString = String.valueOf(personEntry.getDistanceFromUser()) + " m";
+                    distanceText.setText(distanceString);
 
                     usernameText.setText(personEntry.getUserToken());
                     return view;
@@ -483,23 +486,5 @@ public class SpotterFragment extends SmartFragment implements PlaceInterface {
                         }
                     }
                 });
-    }
-
-    @Override
-    public void onPlaceUpdate(List<PlaceEntry> placeEntryList) {
-
-        if (placeEntryList != null && placeEntryList.size() != 0) {
-
-            Log.d(TAG, "smartPlacesChange() called with: " + "places = [" + placeEntryList.size() + "]");
-
-            if (Config.placeEntryList != null) {
-                Config.placeEntryList.clear();
-            }
-
-            Config.placeEntryList = placeEntryList;
-
-            drawMarkers();
-        }
-
     }
 }
