@@ -1,6 +1,8 @@
 package com.mieczkowskidev.friendspotter;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.support.design.widget.NavigationView;
@@ -79,8 +81,8 @@ public class MainActivity extends SmartCompatActivity
 //        getPeopleManager().setDataPayload("");
         AppData.startAllServices(this);
 
-        int searchRadius = getPeopleManager().getSearchRadius();
-        Log.d(TAG, "SmartPeople Data for users within " + searchRadius + " meters\n");
+        int searchRadius = getSharedPreferences("people_api", Context.MODE_PRIVATE).getInt("seek_radius", 8000);
+        getPeopleManager().setSearchRadius(searchRadius);
 
         prepareNavigationDrawer();
 

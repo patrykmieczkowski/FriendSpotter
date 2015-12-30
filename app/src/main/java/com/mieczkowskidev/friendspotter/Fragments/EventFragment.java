@@ -58,7 +58,7 @@ public class EventFragment extends Fragment {
 
     private static final String TAG = EventFragment.class.getSimpleName();
     private static final int REQUEST_TAKE_PHOTO = 1337;
-    private TextView addressText;
+    private TextView addressText, inviteText;
     private ImageView eventPhoto;
     private EditText eventTitleEdit, eventDescriptionEdit;
     private String imagePath, eventAddress;
@@ -97,6 +97,7 @@ public class EventFragment extends Fragment {
         eventDescriptionEdit = (EditText) view.findViewById(R.id.event_description);
         addButton = (FloatingActionButton) view.findViewById(R.id.event_add_floating_button);
         eventCoordinatorLayout = (CoordinatorLayout) view.findViewById(R.id.event_coordinator_layout);
+        inviteText = (TextView) view.findViewById(R.id.event_invite_friends_text);
 
     }
 
@@ -132,6 +133,17 @@ public class EventFragment extends Fragment {
         String descriptionHint = "Join and have fun!";
         eventTitleEdit.setHint(titleHint);
         eventDescriptionEdit.setHint(descriptionHint);
+
+        String invitePeopleString;
+
+        if (Config.personEntryList != null && Config.personEntryList.size() != 0) {
+            invitePeopleString = "Invite will be send to " + String.valueOf(Config.personEntryList.size()) +
+                    " friends in radius";
+        } else {
+            invitePeopleString = "Invite will be send to all friends in radius";
+        }
+
+        inviteText.setText(invitePeopleString);
     }
 
     @Override

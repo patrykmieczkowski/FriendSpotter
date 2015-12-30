@@ -1,6 +1,8 @@
 package com.mieczkowskidev.friendspotter.Fragments;
 
 import android.app.Fragment;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -93,8 +95,18 @@ public class SettingsFragment extends SmartFragment {
                 Log.d(TAG, "onStopTrackingTouch() called with progress: " + searchRadius);
 
                 getPeopleManager().setSearchRadius(searchRadius);
+
             }
         });
+
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("people_api", Context.MODE_PRIVATE);
+        sharedPreferences.edit().putInt("seek_radius", searchRadius).apply();
 
     }
 }

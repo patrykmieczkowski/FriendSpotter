@@ -7,9 +7,11 @@ import com.mieczkowskidev.friendspotter.R;
  */
 public class WeatherManager {
 
-    public static int getDrawableForWeather (String weather){
+    public static int getDrawableForWeather(String weather) {
 
-        switch (weather){
+        // clear
+
+        switch (weather) {
             case "Cloudy":
                 return R.drawable.weather_sun_clouds;
             case "Chance of Rain":

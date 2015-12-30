@@ -59,14 +59,14 @@
             tools:text="ul. Kartuszynskie 150" />
 
         <TextView
-            android:id="@+id/event_invite_friends"
+            android:id="@+id/event_invite_friends_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/event_address_text"
             android:layout_marginTop="20dp"
             android:background="@drawable/event_pole_male"
             android:gravity="center"
-            android:text="Invite will be send to all friends in radius"
+            tools:text="Invite will be send to all friends in radius"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
     </RelativeLayout>
